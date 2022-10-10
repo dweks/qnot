@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from parse import initial_parse
 from file import write
-from note import Note
+from action import Note
 import sys
 
 
@@ -41,8 +41,10 @@ def main():
     # either as note, command, error
 
     parsed = initial_parse(sys.argv)
+    print(parsed)
     if isinstance(parsed, Note):
         write(parsed)
+    elif isinstance(parsed, Command):
         pass
 
 

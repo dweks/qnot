@@ -6,3 +6,8 @@ class Note:
         self.data["title"] = title
         self.data["note"] = note
         self.data["tags"] = tags
+
+
+class Command:
+    def __init__(self):
+        pass
