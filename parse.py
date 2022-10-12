@@ -1,8 +1,5 @@
 import re
 
-# TODO fix tags pattern to find tags at beginning of input
-TAGS_PTRN = r" \+[a-zA-Z]+\d*"
-TITLE_DELIM = r"::"
 
 
 def parse_command(argv):
@@ -11,22 +8,33 @@ def parse_command(argv):
 
 
 def parse_note(note_str):
+    if not isinstance(note_str, str):
+        print("Parameter for parse() is not a string!")
+
+    delim = r"::"
     note, title, tags = None, None, None
 
-    if TITLE_DELIM in note_str and note_str != TITLE_DELIM:
-        parts = note_str.partition(TITLE_DELIM)
+    if delim in note_str and note_str != delim:
+        parts = note_str.partition(delim)
         note = parts[2].strip()
         title = parts[0].strip()
     else:
         note = note_str
         title = generate_title(note)
 
-    tags_maybe = re.findall(TAGS_PTRN, note)
-    if tags_maybe:
-        tags = [tag.lstrip(' ') for tag in tags_maybe]
-        tags = [tag.lstrip('+') for tag in tags]
+    tags = parse_tags(note)
 
     return dict(title=title, note=note, tags=tags)
+
+
+def parse_tags(to_parse):
+    # TODO fix tags pattern to find tags at beginning of input
+    tags_maybe = re.findall(r" \+[a-zA-Z]+\d*", to_parse)
+    if tags_maybe is None:
+        return None
+    tags = [tag.lstrip(' ') for tag in tags_maybe]
+    tags = [tag.lstrip('+') for tag in tags]
+    return tags
 
 
 def generate_title(note):

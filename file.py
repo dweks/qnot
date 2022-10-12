@@ -40,8 +40,8 @@ def write_tags(new_tags):
         return -1
     if os.stat(ut.TAGS_PATH).st_size != 0:
         with open(ut.TAGS_PATH, "r") as tag_file:
-            file_tags = json.load(tag_file)
-        merged_tags = list(set(file_tags + new_tags))
+            tags_from_file = json.load(tag_file)
+        merged_tags = list(set(tags_from_file + new_tags))
         with open(ut.TAGS_PATH, "w") as tag_file:
             json.dump(merged_tags, tag_file, indent=4)
     else:

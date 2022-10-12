@@ -11,19 +11,20 @@ from parse import parse_note
 # Start editor as subprocess
 # If note was created, convert contents to string then parse and write to json
 # Otherwise, output "no note saved message"
-def handle_edit():
+def handle_edit(existing):
     path = {
         "top": ut.NOTES_PATH,
         "day": ut.make_dir_date(),
-        "file": "_TEMP",
+        "file": existing if existing is not None else "_TEMP",
     }
     full_path = ut.make_note_path(path)
 
     user_editor = get_user_editor()
     run_editor = sproc.run([user_editor, full_path])
     if run_editor.returncode != 0:
-        print("Something happened with editor; note not created")
-        return None
+        print("Something happened with the editor; note not created")
+        return
+
     if os.path.isfile(full_path):
         note = ut.file_to_string(full_path)
         os.remove(full_path)
@@ -33,8 +34,8 @@ def handle_edit():
             file.write_tags(note["tags"])
         return note
     else:
-        print("Note not created.")
-        return None
+        print("Editor did not create file: note not created.")
+        return
 
 
 def get_user_editor():

@@ -1,4 +1,3 @@
-import utilities as ut
 from parse import parse_note
 import file as file
 

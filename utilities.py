@@ -1,10 +1,12 @@
 import datetime as dt
 import os
 
-SAVE_PATH = "./temp_save/"
+ASSETS_PATH = "./assets/"
 TAGS_FNAME = "tags.json"
-TAGS_PATH = SAVE_PATH + TAGS_FNAME
-NOTES_PATH = "./temp_save/notes/"
+SETTINGS_PATH = "./settings.json"
+TAGS_PATH = ASSETS_PATH + TAGS_FNAME
+NOTES_PATH = "./notes/"
+
 DATE_FMT = "%m-%d-%y"
 
 
@@ -35,5 +37,4 @@ def file_to_string(path):
         with open(path, "r") as file:
             if os.path.isfile(path):
                 return file.read()
-
-
+    return None
