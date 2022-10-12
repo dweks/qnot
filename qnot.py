@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-from parse import initial_parse
-from file import write
-from action import Note
 import sys
+from parse import parse_note, parse_command
+from edit import handle_edit
+from note import handle_note
+from command import handle_command
 
 
 class Help:
@@ -28,24 +29,30 @@ class Help:
         print("       view, help, edit, remove, tags")
 
 
-class Command:
-    def __init__(self):
-        pass
+COMMANDS = ('h', 'v', 'a')
 
-    def is_command(self, argv):
-        pass
+
+def switch(argv):
+    if len(argv) == 1:
+        return "edit"
+    else:
+        if argv[1] in COMMANDS:
+            return "command"
+        else:
+            return "note"
 
 
 def main():
-    # Some key in main that directs how argv is treated
-    # either as note, command, error
+    mode = switch(sys.argv)
+    result = None
 
-    parsed = initial_parse(sys.argv)
-    print(parsed)
-    if isinstance(parsed, Note):
-        write(parsed)
-    elif isinstance(parsed, Command):
-        pass
+    if mode == "edit":
+        result = handle_edit()
+    if mode == "command":
+        result = handle_command(sys.argv[1:])
+    if mode == "note":
+        result = handle_note(sys.argv[1:])
+
 
 
 if __name__ == "__main__":
