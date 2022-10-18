@@ -2,8 +2,8 @@ import re
 from note import Note
 from path import Path
 from file import NOTES_PATH
-import utilities as ut
-from command import Command
+import util as ut
+from cmd import Command
 
 DELIM = r"::"
 

@@ -4,7 +4,7 @@ import sys
 import file as f
 from parse import parse_raw
 from note import Note
-from command import Command
+from cmd import Command
 
 
 def initialize():

@@ -1,18 +1,22 @@
 import subprocess as sproc
 import os
 import sys
-from utilities import file_to_string, make_dir_date, make_full_date
+from util import file_to_string, make_dir_date, make_full_date
 from file import NOTES_PATH, write, write_tags
 from path import Path
 import parse as prs
 
 
-def edit(existing=None):
+def cmd_edit(cmd=None, args=None):
+    pass
+
+
+def cmd_full(cmd=None, args=None):
     date = make_full_date()
     path = Path(
         NOTES_PATH,
         make_dir_date(date),
-        existing if existing is not None else "_TEMP",
+        "_TEMP",
     )
     full_path = path.get_full_path()
 
