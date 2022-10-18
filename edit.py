@@ -1,41 +1,39 @@
 import subprocess as sproc
 import os
 import sys
-import utilities as ut
-import file as file
-from parse import parse_note
+from utilities import file_to_string, make_dir_date, make_full_date
+from file import NOTES_PATH, write, write_tags
+from path import Path
+import parse as prs
 
 
-# Determine default user editor (linux only so far)
-# Generate full path from passed date string
-# Start editor as subprocess
-# If note was created, convert contents to string then parse and write to json
-# Otherwise, output "no note saved message"
-def handle_edit(existing):
-    path = {
-        "top": ut.NOTES_PATH,
-        "day": ut.make_dir_date(),
-        "file": existing if existing is not None else "_TEMP",
-    }
-    full_path = ut.make_note_path(path)
+def edit(existing=None):
+    date = make_full_date()
+    path = Path(
+        NOTES_PATH,
+        make_dir_date(date),
+        existing if existing is not None else "_TEMP",
+    )
+    full_path = path.get_full_path()
 
+    # Determine default user editor (linux only so far) then
     user_editor = get_user_editor()
+    # Start editor as subprocess
     run_editor = sproc.run([user_editor, full_path])
     if run_editor.returncode != 0:
         print("Something happened with the editor; note not created")
         return
 
+    # Editor creates formatless temp file; replace with json format
     if os.path.isfile(full_path):
-        note = ut.file_to_string(full_path)
+        note = file_to_string(full_path)
         os.remove(full_path)
-        note = parse_note(note)
-        file.write_note(note)
-        if note["tags"] is not None:
-            file.write_tags(note["tags"])
-        return note
+        note = prs.parse_note(note)
+        write(note)
+        if note.get_tags() is not None:
+            write_tags(note.get_tags())
     else:
         print("Editor did not create file: note not created.")
-        return
 
 
 def get_user_editor():

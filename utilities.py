@@ -1,35 +1,35 @@
 import datetime as dt
 import os
 
-ASSETS_PATH = "./assets/"
-TAGS_FNAME = "tags.json"
-SETTINGS_PATH = "./settings.json"
-TAGS_PATH = ASSETS_PATH + TAGS_FNAME
-NOTES_PATH = "./notes/"
-
 DATE_FMT = "%m-%d-%y"
+TIME_FMT = "%H%M%S"
 
 
-def make_dir_date():
-    return dt.datetime.now().strftime(DATE_FMT) + '/'
+def make_full_date():
+    return dt.datetime.now()
+
+
+def make_dir_date(date):
+    return date.strftime(DATE_FMT)
+
+
+def make_fname_date(date):
+    return date.strftime(TIME_FMT)
 
 
 def rename_duplicate(path):
-    original = path["file"]
+    original = path.get_fname()
+    updated = original
     count = 1
-    while os.path.exists(make_note_path(path)):
-        path["file"] = original
-        path["file"] += f"_{count}"
+    while os.path.exists(path.get_full_path()):
+        updated = original
+        updated += f"_{count}"
         count += 1
-    return path["file"]
+    path.set_fname(updated)
 
 
 def replace_spaces(string, char):
     return char.join(string.split())
-
-
-def make_note_path(path):
-    return ''.join(path.values()) + '.json'
 
 
 def file_to_string(path):

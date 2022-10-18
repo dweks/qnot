@@ -1,44 +1,45 @@
 #!/usr/bin/env python3
 import os
-import utilities as ut
 import sys
-from edit import handle_edit
-from note import handle_note
-from command import handle_command
+import file as f
+from parse import parse_raw
+from note import Note
+from command import Command
 
 
 def initialize():
-    if not os.path.exists(ut.ASSETS_PATH):
-        os.mkdir(ut.ASSETS_PATH)
-    elif not os.path.exists(ut.TAGS_PATH):
-        open(ut.TAGS_PATH, "w")
-    elif not os.path.exists(ut.SETTINGS_PATH):
-        open(ut.SETTINGS_PATH, "w")
-
-    if not os.path.exists(ut.NOTES_PATH):
-        os.mkdir(ut.NOTES_PATH)
-
-
-def switch(argv):
-    if len(argv) == 1:
-        return "edit"
-    else:
-        if argv[1] in ('h', 'v', 'a'):
-            return "command"
-        else:
-            return "note"
+    if not os.path.exists(f.ASSETS_PATH):
+        print(f.ASSETS_PATH)
+        os.mkdir(f.ASSETS_PATH)
+    if not os.path.exists(f.TAGS_PATH):
+        print(f.TAGS_PATH)
+        file = open(f.TAGS_PATH, "x")
+        file.close()
+    if not os.path.exists(f.SETTINGS_PATH):
+        print(f.SETTINGS_PATH)
+        file = open(f.SETTINGS_PATH, "x")
+        file.close()
+    if not os.path.exists(f.LOOKUP_PATH):
+        print(f.LOOKUP_PATH)
+        file = open(f.LOOKUP_PATH, "x")
+        file.close()
+    if not os.path.exists(f.NOTES_PATH):
+        os.mkdir(f.NOTES_PATH)
 
 
 def main():
     initialize()
-    mode = switch(sys.argv)
+    parsed = parse_raw(sys.argv)
 
-    if mode == "edit":
-        handle_edit(None)
-    if mode == "command":
-        handle_command(sys.argv[1:])
-    if mode == "note":
-        handle_note(sys.argv[1:])
+    if isinstance(parsed, Note):
+        f.write(parsed)
+    elif isinstance(parsed, Command):
+        parsed.print_command()
+        command = parsed.execute()
+        if not command:
+            print("no success")
+    # TODO elif isinstance(parsed, Interface)
+    # ...for when qnot launched without args
 
 
 if __name__ == "__main__":

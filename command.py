@@ -1,4 +1,34 @@
-from parse import parse_command
+from edit import edit
+
+
+class Command:
+    valid_commands = ('f', 'e', 'v', 'h', 'r')
+    valid_arguments = {
+        'e': ["last"],
+        'v': ["all", "recent", "today", "last", "tag", "title"],
+        'h': ["view", "edit", "full", "tag", "title", "remove"],
+        'r': ["last"]
+    }
+
+    def __init__(self, command, args=None):
+        self.__command = command
+        self.__args = args
+
+    def execute(self):
+        if not self.__validate_command():
+            return None
+        if self.__command == 'f':
+            edit()
+
+    def print_command(self):
+        print("Command: ", self.__command, " Args: ", self.__args)
+
+    def __validate_command(self):
+        if self.__command not in self.valid_commands:
+            return False
+        if self.__args and self.__args[0] not in self.valid_arguments[self.__command]:
+            return False
+        return True
 
 
 class Help:
@@ -22,8 +52,3 @@ class Help:
         print("    qnot help <argument>")
         print("    NOTE: Replace <argument> with command:")
         print("       view, help, edit, remove, tags")
-
-
-def handle_command(argv):
-    cmd = parse_command(argv)
-
