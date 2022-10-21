@@ -32,12 +32,13 @@ def main():
     parsed = parse_raw(sys.argv)
 
     if isinstance(parsed, Note):
+        print("[ NOTE ]")
+        parsed.debug_print()
         f.write(parsed)
     elif isinstance(parsed, Command):
+        print("[ COMMAND ]")
         parsed.print_command()
         command = parsed.execute()
-        if not command:
-            print("no success")
     # TODO elif isinstance(parsed, Interface)
     # ...for when qnot launched without args
 

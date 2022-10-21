@@ -13,6 +13,11 @@ class Note:
             "tags": self.__tags
         }
 
+    def debug_print(self):
+        print(f"TITLE: {self.__title}")
+        print(f"NOTE: {self.__note}")
+        print(f"TAGS: {self.__tags}")
+
     def get_title_note(self):
         # TODO consider adding formatting argument options
         return self.__title + r" :: " + self.__note

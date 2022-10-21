@@ -13,7 +13,7 @@ def parse_raw(argv):
         # TODO make this launch the interface mode
         return None
     else:
-        if re.findall(r"^-[a-zA-Z]$", argv[1]):
+        if re.findall(r"^-[a-zA-Z]+$", argv[1]):
             return parse_command(argv)
         else:
             return parse_note(' '.join(argv[1:]))
@@ -41,7 +41,9 @@ def parse_note(raw_note):
     else:
         note = raw_note
     tags = extract_tags(note)
-    print(tags)
+    # TODO make sure this works v
+    if title:
+        tags += extract_tags(title)
 
     return Note(title, note, tags, path, date)
 
