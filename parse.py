@@ -1,7 +1,7 @@
 import re
 from note import Note
 from path import Path
-from file import NOTES_PATH
+from file import DB_PATH
 import util as ut
 from cmd import Command
 
@@ -26,7 +26,7 @@ def parse_command(argv):
 def parse_note(raw_note):
     date = ut.make_full_date()
     path = Path(
-        NOTES_PATH,
+        DB_PATH,
         ut.make_dir_date(date),
         ut.make_fname_date(date),
     )

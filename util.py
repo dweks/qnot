@@ -7,25 +7,6 @@ DATE_FMT = "%m-%d-%y"
 TIME_FMT = "%H%M%S"
 
 
-class Fmt:
-    BLD = '\033[1m'
-    ITL = '\033[3m'
-    UND = '\033[4m'
-    END = '\033[0m'
-
-
-def bld(string):
-    return Fmt.BLD + string + Fmt.END
-
-
-def itl(string):
-    return Fmt.ITL + string + Fmt.END
-
-
-def und(string):
-    return Fmt.UND + string + Fmt.END
-
-
 def make_full_date():
     return dt.datetime.now()
 
@@ -53,7 +34,7 @@ def replace_spaces(string, char):
     return char.join(string.split())
 
 
-def file_to_string(path):
+def file_to_str(path):
     if os.stat(path).st_size != 0:
         with open(path, "r") as file:
             if os.path.isfile(path):

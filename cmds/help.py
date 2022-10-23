@@ -1,4 +1,4 @@
-from util import bld, itl, und
+from display import bld, itl, und, heading, code
 
 
 def exec_help(args):
@@ -21,7 +21,7 @@ def exec_help(args):
 
 
 def help_view():
-    itl("\n[ " + und("COMMAND: view") + " ]\n"),
+    itl("[ " + und("COMMAND: view") + " ]"),
     pass
 
 
@@ -56,38 +56,43 @@ def help_list():
 
 
 def help_basic():
-    print(
-        itl("\n[ " + und("QNOT BASICS") + " ]\n"),
-        "Create, view, edit, or delete notes with simple commands.\n",
+    print(f"""
+{heading("QNOT")}: Create, view, edit, or delete notes with simple commands.
 
-        itl("\n[ " + und("NOTE SYNTAX") + " ]\n"),
-        "Anything before the first :: will be considered a title.",
-        "Include tags by prefixing any word with a +, anywhere in your entry.",
+{heading("NOTE SYNTAX")}
 
-        itl("\n[ " + und("WRITING QNOTES") + " ]\n"),
-        bld("  qnot here is my note"),
-        bld("  qnot with a title :: here is my note"),
-        bld("  qnot here is my note +with +tags"),
-        bld(r'  qnot "here is my note with $pec!^|   \t   (har*<ters "'),
+{bld("Title: ")} Anything before the first :: will be considered a title.
+{bld("Tags: ")} Include tags by prefixing any word with a +, anywhere in your entry.
 
-        itl("\n[ " + und("WRITING EXTENDED NOTES") + " ]\n"),
-        bld("  qnot -f"),
-        "\nNote will be saved as qnot if editor successfully writes.",
-        "Extended notes preserve whitespace and allow special characters.",
+{heading("WRITING QNOTES")}
 
-        itl("\n[ " + und("COMMANDS") + " ]\n"),
-        bld("  qnot <command> <args>"),
-        "\nCommands can be expanded or not (" + bld("-full") + " or " + bld("-f") + ").",
-        "Some commands take arguments; if none supplied, " + und("interface mode") + " starts.",
+{code("  qnot here is my note")}
+{code("  qnot with a title :: here is my note")}
+{code("  qnot here is my note +with +tags")}
+{code('  qnot "here is my note with $pec!^| (har*<ters "')}
 
-        "\nTo list all available commands:\n",
-        bld("  qnot -h list"),
-        "\nTo get details on a specific command: \n",
-        bld("  qnot -h " + itl("<command>")),
+{heading("WRITING EXTENDED NOTES")}
 
-        itl("\n[ " + und("INTERFACE MODE") + " ]\n"),
-        "If needed, qnot will execute a program with a menu with prompt. ",
-        "This occurs if no arguments are given for a command that needs them.",
-        "When interface mode starts, exit without changing by entering " + bld("q") + " anytime.",
-        sep='\n'
-    )
+Extended notes will open a default text-editor for note-taking with more formatting.
+
+{code("  qnot -f")}
+
+Note will be saved as qnot if editor successfully writes.
+Extended notes preserve whitespace and allow special characters.
+
+{heading("COMMANDS")}
+
+{code("  qnot <command> <args>")}
+
+Commands can be expanded or not ({code("-full")} or {code("-f")}).
+Some commands take arguments; if none supplied, {und("interface mode")} starts.
+
+To list all available commands: {bld("  qnot -h list")}
+To get details on a specific command: {bld("  qnot -h " + itl("<command>"))}
+
+{heading("INTERFACE MODE")}
+
+If needed, qnot will execute a program with a menu with prompt.
+This occurs if no arguments are given for a command that needs them.
+When interface mode starts, exit without changing by entering {bld("q")} anytime.
+    """)

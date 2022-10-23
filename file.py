@@ -3,16 +3,17 @@ import util as ut
 import os
 import json
 
-TAGS_FNAME = "tags.json"
-LOOKUP_FNAME = "lookup.json"
-SETTINGS_FNAME = "settings.json"
+TAGS_FNAME = r"tags.json"
+LOOKUP_FNAME = r"lookup.json"
+SETTINGS_FNAME = r"settings.json"
+DB_FNAME = r"qnot.db"
 
-ASSETS_PATH = "./assets"
-NOTES_PATH = "./notes"
+ASSETS_PATH = r"./assets"
+DB_PATH = r"./notes"
 
+DB_FULL = DB_PATH + '/' + DB_FNAME
 SETTINGS_PATH = ASSETS_PATH + '/' + SETTINGS_FNAME
 TAGS_PATH = ASSETS_PATH + '/' + TAGS_FNAME
-LOOKUP_PATH = ASSETS_PATH + '/' + LOOKUP_FNAME
 
 
 def write(note):
@@ -35,8 +36,6 @@ def write(note):
     if note.get_tags() is not None:
         write_tags(note.get_tags())
 
-    # Add note with path to lookup table
-    write_lookup(note)
     return 0
 
 
@@ -57,33 +56,3 @@ def write_tags(new_tags):
         with open(full_path, "w") as tag_file:
             json.dump(new_tags, tag_file, indent=4)
 
-
-def write_lookup(note):
-    lookup = Path(ASSETS_PATH, None, LOOKUP_FNAME)
-    lu_full_path = lookup.get_full_path()
-    lu_dir_path = lookup.get_top()
-    note_path = note.get_path()
-
-    if not os.path.exists(lu_full_path):
-        os.mkdir(lu_full_path)
-
-    if os.stat(lu_full_path).st_size != 0:
-        with open(lu_full_path, "r") as lookup:
-            entries = json.load(lookup)
-        entries[note_path.get_fname()] = note_path.get_full_path()
-        with open(lu_full_path, "w") as lookup:
-            json.dump(entries, lookup, indent=4)
-    else:
-        with open(lu_full_path, "w") as lookup:
-            entries = {note_path.get_fname(): note_path.get_full_path()}
-            json.dump(entries, lookup, indent=4)
-
-
-def load_notes():
-    all_notes = []
-    for file in os.listdir(NOTES_PATH):
-        full_path = os.path.join(NOTES_PATH + file)
-        if os.path.isfile(full_path):
-            with open(file, "r") as opened_file:
-                all_notes.append(json.load(opened_file))
-    return all_notes

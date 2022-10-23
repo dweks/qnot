@@ -1,15 +1,17 @@
-import exec as E
 from cmds.help import exec_help
-# TODO make exec cmds their own file and import
+from cmds.full import exec_full
+from cmds.view import exec_view
+from cmds.remove import exec_remove
+from cmds.edit import exec_edit
 
 
 class Command:
     __exec = {
-        'f': E.exec_full,
-        'e': E.exec_edit,
-        'v': E.exec_view,
+        'f': exec_full,
+        'e': exec_edit,
+        'v': exec_view,
         'h': exec_help,
-        'r': E.exec_remove,
+        'r': exec_remove,
     }
 
     def __init__(self, command, args=None):
