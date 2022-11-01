@@ -1,62 +1,54 @@
-from display import bld, itl, und, heading, code
+from output import Output
+from util import bld, itl, und, heading, code
 
 
+# Entry-point for command called from dispatch table in Admin or Standard
+# Help uses a dispatch table for the help 'topics'. The command's parameterless
+# behavior is to TODO display a list of available help topics
 def exec_help(args):
-    message = {
-        "view": help_view,
-        "edit": help_edit,
-        "full": help_full,
-        "tag": help_tag,
-        "title": help_title,
-        "remove": help_remove,
-        "list": help_list,
-        None: help_basic
+    dispatch = {
+        None: h_basic,
+        'view': h_view,
+        'edit': h_edit,
+        'full': h_full,
+        'tag': h_tag,
+        'title': h_title,
+        'remove': h_remove,
     }
 
     arg = None if not args else args[0]
-    if arg not in message.keys():
+    if arg not in dispatch.keys():
         print(f"Invalid argument for 'help': \"{arg}\"")
     else:
-        message[arg]()
+        dispatch[arg]()
 
 
-def help_view():
-    itl("[ " + und("COMMAND: view") + " ]"),
-    pass
+def h_view():
+    return Output("h_view")
 
 
-def help_edit():
-    print("help edit")
-    pass
+def h_edit():
+    return Output("h_edit")
 
 
-def help_full():
-    print("help full")
-    pass
+def h_full():
+    return Output("h_full")
 
 
-def help_tag():
-    print("help tag")
-    pass
+def h_tag():
+    return Output("h_tag")
 
 
-def help_title():
-    print("help title")
-    pass
+def h_title():
+    return Output("h_title")
 
 
-def help_remove():
-    print("help remove")
-    pass
+def h_remove():
+    return Output("h_remove")
 
 
-def help_list():
-    print("help list")
-    pass
-
-
-def help_basic():
-    print(f"""
+def h_basic():
+    return Output(f"""
 {heading("QNOT")}: Create, view, edit, or delete notes with simple commands.
 
 {heading("NOTE SYNTAX")}

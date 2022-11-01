@@ -1,5 +1,4 @@
 .idea
 /testing
-/.vscode
-/note
-bs
+.temp
+.notes.db
