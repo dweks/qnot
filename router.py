@@ -1,6 +1,7 @@
 from admin import Admin
 from standard import Standard
 from util import re
+from dispatch import admin_dispatch, standard_dispatch
 
 
 # The router determines the correct context for execution of commands from
@@ -21,9 +22,9 @@ def router(argv):
     elif re.findall(r"^-[a-zA-Z]+$", argv[1]):
         cmd = argv[1].lstrip('-').lower()
         args = argv[2:]
-        if cmd in Admin.dispatch.keys():
+        if cmd in admin_dispatch.keys():
             Admin(cmd, args)
-        elif cmd in Standard.dispatch.keys():
+        elif cmd in standard_dispatch.keys():
             Standard(cmd, args)
         else:
             raise ValueError(f"Invalid command: '{cmd}'")

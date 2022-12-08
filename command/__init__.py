@@ -6,3 +6,4 @@ from .view import exec_view
 from .full import exec_full
 from .find import exec_find
 from .default import exec_default
+from .list import exec_list

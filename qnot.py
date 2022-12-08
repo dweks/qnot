@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from util import sys
-from db import db_init
+from db_access import db_init
 from router import router
 
 

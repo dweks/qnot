@@ -1,4 +1,3 @@
-from output import Output
 from util import bld, itl, und, heading, code
 
 
@@ -6,49 +5,30 @@ from util import bld, itl, und, heading, code
 # Help uses a dispatch table for the help 'topics'. The command's parameterless
 # behavior is to TODO display a list of available help topics
 def exec_help(args):
-    dispatch = {
-        None: h_basic,
-        'view': h_view,
-        'edit': h_edit,
-        'full': h_full,
-        'tag': h_tag,
-        'title': h_title,
-        'remove': h_remove,
+    message_table = {
+        None: BASIC,
+        'view': VIEW,
+        'edit': EDIT,
+        'full': FULL,
+        'tag': TAG,
+        'title': TITLE,
+        'remove': REMOVE,
     }
 
     arg = None if not args else args[0]
-    if arg not in dispatch.keys():
+    if arg not in message_table.keys():
         print(f"Invalid argument for 'help': \"{arg}\"")
     else:
-        dispatch[arg]()
+        return message_table[arg]
 
 
-def h_view():
-    return Output("h_view")
-
-
-def h_edit():
-    return Output("h_edit")
-
-
-def h_full():
-    return Output("h_full")
-
-
-def h_tag():
-    return Output("h_tag")
-
-
-def h_title():
-    return Output("h_title")
-
-
-def h_remove():
-    return Output("h_remove")
-
-
-def h_basic():
-    return Output(f"""
+VIEW = "h_view"
+EDIT = "h_edit"
+FULL = "h_full"
+TAG = "h_tag"
+TITLE = "h_title"
+REMOVE = "h_remove"
+BASIC = f"""
 {heading("QNOT")}: Create, view, edit, or delete notes with simple commands.
 
 {heading("NOTE SYNTAX")}
@@ -87,4 +67,4 @@ To get details on a specific command: {bld("  qnot -h " + itl("<command>"))}
 If needed, qnot will execute a program with a menu with prompt.
 This occurs if no arguments are given for a command that needs them.
 When interface mode starts, exit without changing by entering {bld("q")} anytime.
-    """)
+"""

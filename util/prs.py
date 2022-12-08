@@ -1,4 +1,5 @@
 from util import re, date_enc, date_norm
+from note import Note
 TITLE_DELIM = '::'
 
 
@@ -24,7 +25,7 @@ def prs_note(raw_note):
     if title:
         tags += parse_tags(title)
 
-    return dict(pkey=pkey, title=title, body=body, tags=tags, date=date)
+    return Note(pkey, title, body, tags, date)
 
 
 # Finds all occurences of substrings with the 'tag' syntax

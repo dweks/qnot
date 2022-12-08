@@ -1,4 +1,4 @@
-from command import *
+from dispatch import admin_dispatch as dispatch
 # TODO change this import to only import admin related commands
 # TODO reorganize commands to have admin and basic
 
@@ -14,43 +14,29 @@ from command import *
 # or removing notes, managing tags, changing settings, or searching
 # for notes is done here.
 class Admin:
-    dispatch = {
-        None: exec_default,
-        'quit': lambda x: "quit",
-        'view': exec_view,
-        'edit': exec_edit,
-        'remove': exec_remove,
-        'help': exec_help,
-        'find': exec_find,
-        'last': "_",
-        'today': "_",
-        'week': "_",
-        'day': "_",
-    }
-
     def __init__(self, cmd=None, args=None):
         # if cmd is None set self.output to default
-        self.output = self.execute(cmd, args)
-        self.interface(self.output)
+        self.output = self.__execute(cmd, args)
+        self.interface()
 
-    def interface(self, out=None):
-        # have check for output being quit and then return
-
-        if out == 'quit':
+    def interface(self):
+        if self.output == 'quit':
             return
+        elif self.output is not None:
+            self.display()
+
+        self.output = self.__prompt()
+        return self.interface()
+
+    def display(self):
+        if type(self.output) is str:
+            print(self.output)
         else:
-            out.display()
+            for page in self.output.pages:
+                for note in self.output.pages[page]:
+                    print(note.body)
 
-        cmd, args = self.prompt()
-
-        if cmd in self.dispatch.keys():
-            out = self.execute(cmd, args)
-            self.output = out
-
-        return self.interface(out)
-
-    @staticmethod
-    def prompt():
+    def __prompt(self):
         cmd, args = None, None
         raw_input = input("> ").split()
         if len(raw_input) >= 1:
@@ -58,8 +44,11 @@ class Admin:
             if len(raw_input) > 1:
                 args = raw_input[1:]
 
-        return cmd, args
+        if cmd in dispatch.keys():
+            return self.__execute(cmd, args)
+        else:
+            return f"Unrecognized command '{cmd}'"
 
-    def execute(self, cmd, args):
-        print(cmd, args)
-        return self.dispatch[cmd](args)
+    @staticmethod
+    def __execute(cmd, args):
+        return dispatch[cmd](args)
