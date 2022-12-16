@@ -8,9 +8,12 @@ from db_access import \
 
 def save_note(note):
     insert_note_to_notes(note)
-    if note.tags is not None:
+    if note.tags is not None and len(note.tags) > 0:
         for tag in note.tags:
-            if not tag_exists(tag):
+            t = tag_exists(tag)
+            if t is None or len(t) == 0:
                 create_tag_table(tag)
             insert_note_to_tag(tag, note.pkey)
             insert_tag_to_tags(tag)
+    else:
+        insert_note_to_tag("notag", note.pkey)

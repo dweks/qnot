@@ -1,6 +1,7 @@
+from .find import exec_find
 
 
 # If an Admin object is created without parameters, this is the default
-# 'dispatched' command.
+# 'dispatched' cmds.
 def exec_default(args=None):
-    return None
+    exec_find(["one"])

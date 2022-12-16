@@ -5,14 +5,14 @@ from dispatch import admin_dispatch, standard_dispatch
 
 
 # The router determines the correct context for execution of commands from
-# command-line arguments. If the router detects a command in the input (if the
-# first argument begins with a `-`) it will verify which context the command
-# belongs to and instantiate it with the command to execute.
+# cmds-line arguments. If the router detects a cmds in the input (if the
+# first argument begins with a `-`) it will verify which context the cmds
+# belongs to and instantiate it with the cmds to execute.
 # Contexts:
-#   Standard - Linux command-line qnot command handler.
-#   Admin - qnot's command-prompt UI.
+#   Standard - Linux cmds-line qnot cmds handler.
+#   Admin - qnot's cmds-prompt UI.
 #
-# If a user provides NO arguments from the command-line (only `qnot`) admin
+# If a user provides NO arguments from the cmds-line (only `qnot`) admin
 # mode is instantiated.
 
 def router(argv):

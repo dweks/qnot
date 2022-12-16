@@ -1,4 +1,6 @@
+from colorama import Fore
 # Output text formatting
+
 
 # Escape sequences for bold, italics, underline
 class Fmt:
@@ -21,6 +23,20 @@ def itl(string):
 # Formats passed string with underline
 def und(string):
     return Fmt.UND + string + Fmt.END
+
+
+# Qnot communication messages
+
+def msg(string):
+    return bld(Fore.CYAN + string)
+
+
+def imp(string):
+    return itl(Fore.RED + bld(string))
+
+
+def prb(string):
+    return itl(Fore.YELLOW + string)
 
 
 # Formats passed string as a header

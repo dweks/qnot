@@ -1,7 +1,7 @@
 from util import prs_note, date_enc, user_editor, file_str, os, sp, save_note
 
 
-# Entry-point for command called from dispatch table in Standard
+# Entry-point for cmds called from dispatch table in Standard
 #
 # Gets user editor then uses editor to create a temporary file for user to edit.
 # If file is saved, its contents are extracted as a string and the temp file is removed.

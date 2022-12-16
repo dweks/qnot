@@ -1,11 +1,12 @@
-from dispatch import admin_dispatch as dispatch
-# TODO change this import to only import admin related commands
-# TODO reorganize commands to have admin and basic
+from dispatch import admin_dispatch as dispatch, mod_dispatch
+from util import msg
+from listing import Listing
+from exceptions import InvalidInput, MatchNotFound
 
 
 # The user interface for qnot. 'Admin mode' only instantiates implicitly.
-# It cannot be called with a specific command.
-# When a user enters certain qnot commands from the Linux command-line,
+# It cannot be called with a specific cmds.
+# When a user enters certain qnot commands from the Linux cmds-line,
 # they will open in admin mode. If a user executes qnot without any arguments,
 # admin mode begins.
 #
@@ -14,41 +15,150 @@ from dispatch import admin_dispatch as dispatch
 # or removing notes, managing tags, changing settings, or searching
 # for notes is done here.
 class Admin:
-    def __init__(self, cmd=None, args=None):
-        # if cmd is None set self.output to default
-        self.output = self.__execute(cmd, args)
+    # TODO change default startup execution
+    def __init__(self, cmd="last", args=None):
+        if args is None:
+            args = ['5']
+        self.selection = None
+        self.done = False
+        self.modify = False
+        self.query = cmd, args
+        self.suspend = False
+        self.refresh = False
+
+        try:
+            self.output = self.__execute(cmd, args)
+        except MatchNotFound:
+            self.output = None
+        self.listing = self.output if isinstance(self.output, Listing) else None
+
         self.interface()
 
     def interface(self):
-        if self.output == 'quit':
+        # self.__debug()
+        if self.refresh:
+            self.__refresh()
+        if self.listing is not None and not self.suspend:
+            self.listing.display_page()
+        elif not self.suspend:
+            print("Use 'find' to search for notes [help find].")
+        try:
+            cmd, args = self.__prompt()
+
+            if cmd is None:
+                # print("// cmd is None:", cmd)
+                if self.modify:
+                    print(msg("Modify cancelled, reselect to modify."))
+                    self.modify = False
+                self.suspend = True
+                self.output = None
+
+            elif cmd in dispatch.keys():
+                # print("// admin dispatch:", cmd)
+                if self.modify:
+                    print(msg("Modify cancelled, reselect to modify."))
+                    self.modify = False
+                self.output = self.__execute(cmd, args)
+
+            elif cmd in mod_dispatch.keys():
+                # print("// mod dispatch:", cmd)
+                self.output = self.__execute(cmd, self.selection)
+                self.modify = False
+                self.selection = None
+
+            elif cmd.isdigit():
+                # print("// is digit:", cmd)
+                self.modify = True
+                self.output = None
+                self.selection = self.listing.retrieve(int(cmd))
+                print(msg(f"Viewing {int(cmd)}"))
+                self.selection.print_multiline()
+
+            else:
+                self.suspend = True
+                raise InvalidInput("admin prompt", cmd + (' ' + ' '.join(args) if args is not None else ''))
+
+            self.suspend = True
+            self.refresh = False
+            self.__handle_output(cmd, args)
+
+        except Exception as e:
+            print(e)
+
+        if self.done:
             return
-        elif self.output is not None:
-            self.display()
-
-        self.output = self.__prompt()
-        return self.interface()
-
-    def display(self):
-        if type(self.output) is str:
-            print(self.output)
-        else:
-            for page in self.output.pages:
-                for note in self.output.pages[page]:
-                    print(note.body)
+        self.interface()
 
     def __prompt(self):
         cmd, args = None, None
-        raw_input = input("> ").split()
+        if self.modify:
+            print(msg("Choose (e)dit or (r)emove:"))
+            raw_input = input(">> ").split()
+        else:
+            raw_input = input("> ").split()
         if len(raw_input) >= 1:
             cmd = raw_input[0]
             if len(raw_input) > 1:
                 args = raw_input[1:]
+        return cmd, args
 
-        if cmd in dispatch.keys():
-            return self.__execute(cmd, args)
-        else:
-            return f"Unrecognized command '{cmd}'"
-
-    @staticmethod
-    def __execute(cmd, args):
+    def __execute(self, cmd, args):
+        if self.modify:
+            return mod_dispatch[cmd](args)
         return dispatch[cmd](args)
+
+    def __handle_output(self, cmd, args):
+        if isinstance(self.output, Listing):
+            self.query = cmd, args
+            self.listing = self.output
+            self.suspend = False
+
+        elif self.output == "deleted":
+            print(msg("Note deleted."))
+            self.refresh = True
+
+        elif self.output == "added":
+            print(msg("Note added."))
+            self.refresh = True
+
+        elif self.output == "cancel":
+            print(msg("Nothing changed. Select again to modify."))
+            self.suspend = False
+
+        elif self.output == "next":
+            if self.listing.next_page() is not None:
+                self.suspend = False
+
+        elif self.output == "prev":
+            self.suspend = True
+            if self.listing.prev_page() is not None:
+                self.suspend = False
+
+        elif self.output == "suspend":
+            self.suspend = True
+
+        elif self.output == "show":
+            self.suspend = False
+
+        elif self.output == "quit":
+            self.done = True
+
+        else:
+            self.suspend = True
+
+    def __refresh(self):
+        ret = self.__execute(self.query[0], self.query[1])
+        self.listing = ret if isinstance(ret, Listing) else None
+        self.refresh = False
+
+    def __debug(self):
+        print("#################################")
+        print("query:", self.query)
+        print("output:", self.output)
+        print("selection:", self.selection)
+        print("listing:", self.listing)
+        print("modify:", self.modify)
+        print("suspend:", self.suspend)
+        print("refresh:", self.refresh)
+        print("done:", self.done)
+        print("#################################")
