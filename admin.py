@@ -1,5 +1,5 @@
 from dispatch import admin_dispatch as dispatch, mod_dispatch
-from util import msg
+from util import msg, lred_b, lyel
 from listing import Listing
 from exceptions import InvalidInput, MatchNotFound
 
@@ -41,12 +41,12 @@ class Admin:
         if self.listing is not None and not self.suspend:
             self.listing.display_page()
         elif not self.suspend:
-            print("Use 'find' to search for notes [help find].")
+            print(msg("Use 'find' to search for notes [help find]."))
         try:
             cmd, args = self.__prompt()
 
             if cmd is None:
-                # print("// cmd is None:", cmd)
+                print("// cmd is None:", cmd)
                 if self.modify:
                     print(msg("Modify cancelled, reselect to modify."))
                     self.modify = False
@@ -54,27 +54,33 @@ class Admin:
                 self.output = None
 
             elif cmd in dispatch.keys():
-                # print("// admin dispatch:", cmd)
+                print("// admin dispatch:", cmd)
                 if self.modify:
                     print(msg("Modify cancelled, reselect to modify."))
                     self.modify = False
                 self.output = self.__execute(cmd, args)
 
             elif cmd in mod_dispatch.keys():
-                # print("// mod dispatch:", cmd)
+                print("// mod dispatch:", cmd)
                 self.output = self.__execute(cmd, self.selection)
                 self.modify = False
                 self.selection = None
 
             elif cmd.isdigit():
-                # print("// is digit:", cmd)
+                print("// is digit:", cmd)
+                if self.modify:
+                    print(msg("Modify cancelled, reselect to modify."))
                 self.modify = True
                 self.output = None
                 self.selection = self.listing.retrieve(int(cmd))
-                print(msg(f"Viewing {int(cmd)}"))
+                print()
+                print(lyel(f"Viewing {int(cmd)}"))
                 self.selection.print_multiline()
 
             else:
+                if self.modify:
+                    print(msg("Modify cancelled, reselect to modify."))
+                    self.modify = False
                 self.suspend = True
                 raise InvalidInput("admin prompt", cmd + (' ' + ' '.join(args) if args is not None else ''))
 
@@ -92,10 +98,10 @@ class Admin:
     def __prompt(self):
         cmd, args = None, None
         if self.modify:
-            print(msg("Choose (e)dit or (r)emove:"))
-            raw_input = input(">> ").split()
+            print(msg("Choose (e)dit or (r)emove\nLeave blank or call other command to cancel."))
+            raw_input = input(lred_b(">> ")).split()
         else:
-            raw_input = input("> ").split()
+            raw_input = input(lred_b("> ")).split()
         if len(raw_input) >= 1:
             cmd = raw_input[0]
             if len(raw_input) > 1:

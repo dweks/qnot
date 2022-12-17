@@ -1,4 +1,4 @@
-from util import prb
+from util import warn
 
 
 class InvalidInput(Exception):
@@ -7,7 +7,7 @@ class InvalidInput(Exception):
         self.inp = inp
 
     def __str__(self):
-        return prb(f"Input for '{self.place}' not recognized: {self.inp}")
+        return warn(f"Input for '{self.place}' not recognized: {self.inp}")
 
 
 class ListingItemNotExist(Exception):
@@ -15,7 +15,7 @@ class ListingItemNotExist(Exception):
         self.err = err
 
     def __str__(self):
-        return prb(f"Index provided does not correspond to an item: {self.err}")
+        return warn(f"Index provided does not correspond to an item: {self.err}")
 
 
 class OutsidePageBounds(Exception):
@@ -23,12 +23,12 @@ class OutsidePageBounds(Exception):
         self.err = err
 
     def __str__(self):
-        return prb(f"Exceeded page bounds; total pages: {self.err}")
+        return warn(f"No more pages; total pages: {self.err}")
 
 
 class NoPagesInListing(Exception):
     def __str__(self):
-        return prb("Empty listing!")
+        return warn("Empty listing!")
 
 
 class MissingArguments(Exception):
@@ -36,7 +36,7 @@ class MissingArguments(Exception):
         self.err = err
 
     def __str__(self):
-        return prb(f"'{self.err}' must take arguments")
+        return warn(f"'{self.err}' must take arguments")
 
 
 class MissingSearchQuery(Exception):
@@ -44,7 +44,7 @@ class MissingSearchQuery(Exception):
         self.err = err
 
     def __str__(self):
-        return prb(f"'{self.err}' must take a search query")
+        return warn(f"'{self.err}' must take a search query")
 
 
 class MatchNotFound(Exception):
@@ -52,7 +52,7 @@ class MatchNotFound(Exception):
         self.err = err
 
     def __str__(self):
-        return prb(f"No matches found for '{self.err}'")
+        return warn(f"No matches found for '{self.err}'")
 
 
 class SelectBeforeModify(Exception):
@@ -60,7 +60,7 @@ class SelectBeforeModify(Exception):
         self.err = err
 
     def __str__(self):
-        return prb(f"Select a note to {self.err}")
+        return warn(f"Select a note to {self.err}")
 
 
 class NotListable(Exception):
@@ -68,4 +68,4 @@ class NotListable(Exception):
         self.err = err
 
     def __str__(self):
-        return prb(f"Nothing to list for: {self.err}")
+        return warn(f"Nothing to list for: {self.err}")

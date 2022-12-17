@@ -31,20 +31,6 @@ def user_editor():
 
 
 # Writes string to a file
-def write(what, where):
-    pass
-    # full_path = note.get_path().get_full_path()
-    # dir_path = note.get_path().get_top_mid()
-    #
-    # # Create dir with today's date
-    # if not os.path.exists(dir_path):
-    #     os.mkdir(dir_path)
-    #
-    # # In off chance of duplicate fname, handle it with suffix
-    # if os.path.exists(full_path):
-    #     ut.rename_duplicate(note.get_path())
-    #     full_path = note.get_path().get_full_path()
-    #
-    # # Write note to json
-    # with open(full_path, "w") as notes_file:
-    #     json.dump(note.dump(), notes_file, indent=4)
+def write_to_file(note, path):
+    with open(path, "w") as notes_file:
+        notes_file.write(note.title + " :: " + note.body)

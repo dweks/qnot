@@ -1,5 +1,5 @@
 from db_access import remove_note
-from util import imp
+from util import imp, line
 from exceptions import SelectBeforeModify
 
 
@@ -7,8 +7,11 @@ from exceptions import SelectBeforeModify
 def exec_remove(note) -> str:
     if note is None:
         raise SelectBeforeModify("remove.")
+    print()
     print(imp('PERMANENTLY DELETING NOTE:'))
-    note.print_oneline()
+    line()
+    note.print_multiline()
+    line()
     response = input("Confirm Y/n > ")
     if response == 'Y':
         remove_note(note)

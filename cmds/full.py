@@ -1,4 +1,4 @@
-from util import prs_note, date_enc, user_editor, file_str, os, sp, save_note
+from util import prs_note, date_enc, user_editor, file_str, os, sp, save_note, write_to_file
 
 
 # Entry-point for cmds called from dispatch table in Standard
@@ -7,10 +7,11 @@ from util import prs_note, date_enc, user_editor, file_str, os, sp, save_note
 # If file is saved, its contents are extracted as a string and the temp file is removed.
 # The string is parsed as a note and inserted in the database
 
-def exec_full(args=None):
-    # TODO figure out what to do with this function's args
+def exec_edit(note=None):
     TEMP_PATH = r"./.temp/temp_note_" + date_enc()
-    func = exec_full.__name__
+    func = exec_edit.__name__
+    if note:
+        write_to_file(note, TEMP_PATH)
 
     editor = user_editor()
     if editor is not None:
@@ -18,9 +19,8 @@ def exec_full(args=None):
         # Cases when opened editor is interrupted before exiting.
         if run_editor.returncode != 0:
             raise OSError(f"Editor interrupted; note not created ({func})")
-
     else:
-        raise RuntimeError(f"No default editor found; check $EDITOR or $VISUAL? ({func})")
+        raise RuntimeError(f"No default editor found; check $EDITOR or $VISUAL; ({func})")
 
     # Remove temp file, parse note, insert to database
     if os.path.isfile(TEMP_PATH):

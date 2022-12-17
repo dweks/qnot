@@ -1,4 +1,5 @@
 from colorama import Fore
+MAX_WIDTH = 80
 # Output text formatting
 
 
@@ -32,10 +33,10 @@ def msg(string):
 
 
 def imp(string):
-    return itl(Fore.RED + bld(string))
+    return Fore.RED + bld(string)
 
 
-def prb(string):
+def warn(string):
     return itl(Fore.YELLOW + string)
 
 
@@ -47,3 +48,23 @@ def heading(string):
 # Formats passed string as code
 def code(string):
     return bld(string)
+
+
+def line(char=None, length=None):
+    if not char:
+        char = '-'
+    if not length:
+        length = MAX_WIDTH
+
+    return Fore.LIGHTBLACK_EX + char * length + Fmt.END
+
+
+def lred_b(string):
+    return Fore.LIGHTRED_EX + bld(string) + Fmt.END
+
+
+def lyel(string):
+    return Fore.LIGHTYELLOW_EX + string + Fmt.END
+
+def debug(string):
+    print(Fore.LIGHTMAGENTA_EX + string + Fmt.END)

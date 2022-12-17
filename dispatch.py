@@ -7,7 +7,7 @@ admin_dispatch = {
     'help': exec_help,
     'f': exec_find,
     'find': exec_find,
-    'full': exec_full,
+    'full': exec_edit,
     'ls': exec_list,
     'list': exec_list,
     'l': exec_last,
@@ -33,8 +33,7 @@ mod_dispatch = {
 
 standard_dispatch = {
     'quick': exec_quick,
-    'full': exec_full,
+    'full': exec_edit,
     'l': exec_last,
     'last': exec_last,
 }
-

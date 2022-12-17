@@ -91,7 +91,7 @@ def tag_exists(tag):
 def insert_note_to_notes(note):
     sql = \
         f"""
-        INSERT INTO Notes (
+        REPLACE INTO Notes (
             {NOTES_COL_PKEY},
             {NOTES_COL_TITLE},
             {NOTES_COL_BODY},
@@ -101,7 +101,7 @@ def insert_note_to_notes(note):
             "{note.pkey}",
             "{note.title}",
             "{note.body}",
-            "{note.tags}",
+            "{repr(note.tags)}",
             "{note.date}"
         );
         """

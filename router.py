@@ -2,6 +2,7 @@ from admin import Admin
 from standard import Standard
 from util import re
 from dispatch import admin_dispatch, standard_dispatch
+import curses
 
 
 # The router determines the correct context for execution of commands from
