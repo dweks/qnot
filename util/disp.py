@@ -40,6 +40,10 @@ def warn(string):
     return itl(Fore.YELLOW + string)
 
 
+def suc(string):
+    return Fore.LIGHTGREEN_EX + string + Fmt.END
+
+
 # Formats passed string as a header
 def heading(string):
     return und(string)
@@ -63,8 +67,17 @@ def lred_b(string):
     return Fore.LIGHTRED_EX + bld(string) + Fmt.END
 
 
+def cyan_b(string):
+    return Fore.LIGHTCYAN_EX + string + Fmt.END
+
+
 def lyel(string):
     return Fore.LIGHTYELLOW_EX + string + Fmt.END
 
+
+def gray(string):
+    return Fore.LIGHTBLACK_EX + string + Fmt.END
+
+
 def debug(string):
-    print(Fore.LIGHTMAGENTA_EX + string + Fmt.END)
+    print(Fore.LIGHTMAGENTA_EX + str(string) + Fmt.END)

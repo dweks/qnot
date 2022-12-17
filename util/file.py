@@ -4,7 +4,7 @@ from util import os, sys
 # Interacting with the user's file system
 
 # Retrieves content of a file as a string, preserving formatting
-def file_str(path):
+def file_to_str(path):
     if os.stat(path).st_size != 0:
         with open(path, "r") as file:
             if os.path.isfile(path):
@@ -32,5 +32,6 @@ def user_editor():
 
 # Writes string to a file
 def write_to_file(note, path):
+    title_maybe = note.title + " :: " if note.title != "None" else ''
     with open(path, "w") as notes_file:
-        notes_file.write(note.title + " :: " + note.body)
+        notes_file.write(title_maybe + note.body)

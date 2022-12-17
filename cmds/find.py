@@ -1,6 +1,7 @@
 from db_access import select_notes_tagged_with as select_by_tag
 from listing import Listing
 from exceptions import MissingArguments, MissingSearchQuery, MatchNotFound
+from util import debug
 
 
 # Entry-point for cmds called from dispatch table in Admin
@@ -9,7 +10,7 @@ from exceptions import MissingArguments, MissingSearchQuery, MatchNotFound
 # which alter the generation of SQL queries. If 'find' is not provided with
 # a filter or section and only a search string, the default searched location
 # is TODO
-def exec_find(args) -> Listing or str:
+def exec_find(args):
     filters = {'today', 'week', 'day', }
     section = {'title', 'body', 'tag', }
     filt, sect, query = None, None, None

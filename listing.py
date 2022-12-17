@@ -1,5 +1,5 @@
 import math
-from util import bld, lyel, debug
+from util import bld, lyel, debug, line
 from exceptions import ListingItemNotExist, OutsidePageBounds, NoPagesInListing
 from note import Note
 ITEMS_PER_PAGE = 5
@@ -7,7 +7,6 @@ ITEMS_PER_PAGE = 5
 
 # TODO if select_notes_tagged_with returns None or just a string, must handle it before creating book
 class Listing:
-
     def __init__(self, title, items):
         self.title = title
         self.items = items
@@ -21,7 +20,6 @@ class Listing:
         page_num = 1
         for i in range(0, self.item_count, ITEMS_PER_PAGE):
             pages[page_num] = [Note(*n) for n in self.items[i:i + ITEMS_PER_PAGE]]
-            debug("generate")
             page_num += 1
         return pages
 
@@ -29,7 +27,6 @@ class Listing:
         if self.page_count == 0:
             raise NoPagesInListing()
 
-        print()
         print(bld(f"{self.title} -- found {self.item_count}"))
         for item in self.pages[self.current_page]:
             item_id = self.pages[self.current_page].index(item) + 1 + (self.current_page - 1) * ITEMS_PER_PAGE

@@ -1,6 +1,7 @@
 from db_access import select_all_tags
-from exceptions import MissingArguments, NotListable
+from exceptions import NotListable
 from util import msg
+
 
 # Lists things like commands, tags, help topics, etc
 def exec_list(args):

@@ -1,5 +1,5 @@
 from dispatch import admin_dispatch as dispatch, mod_dispatch
-from util import msg, lred_b, lyel
+from util import msg, lred_b, lyel, warn, debug, suc, cyan_b
 from listing import Listing
 from exceptions import InvalidInput, MatchNotFound
 
@@ -41,45 +41,44 @@ class Admin:
         if self.listing is not None and not self.suspend:
             self.listing.display_page()
         elif not self.suspend:
-            print(msg("Use 'find' to search for notes [help find]."))
+            print(warn("No notes to list; add note, or search for notes to list here."))
         try:
             cmd, args = self.__prompt()
 
             if cmd is None:
-                print("// cmd is None:", cmd)
+                # print("// cmd is None:", cmd)
                 if self.modify:
-                    print(msg("Modify cancelled, reselect to modify."))
+                    print(warn("Modify cancelled, reselect to modify."))
                     self.modify = False
                 self.suspend = True
                 self.output = None
 
             elif cmd in dispatch.keys():
-                print("// admin dispatch:", cmd)
+                # print("// admin dispatch:", cmd)
                 if self.modify:
-                    print(msg("Modify cancelled, reselect to modify."))
+                    print(warn("Modify cancelled, reselect to modify."))
                     self.modify = False
                 self.output = self.__execute(cmd, args)
 
             elif cmd in mod_dispatch.keys():
-                print("// mod dispatch:", cmd)
+                # print("// mod dispatch:", cmd)
                 self.output = self.__execute(cmd, self.selection)
                 self.modify = False
                 self.selection = None
 
             elif cmd.isdigit():
-                print("// is digit:", cmd)
+                # print("// is digit:", cmd)
                 if self.modify:
-                    print(msg("Modify cancelled, reselect to modify."))
+                    print(warn("Modify cancelled, reselect to modify."))
                 self.modify = True
                 self.output = None
                 self.selection = self.listing.retrieve(int(cmd))
-                print()
-                print(lyel(f"Viewing {int(cmd)}"))
+                print(lyel(f"\nViewing {int(cmd)}"))
                 self.selection.print_multiline()
 
             else:
                 if self.modify:
-                    print(msg("Modify cancelled, reselect to modify."))
+                    print(warn("Modify cancelled, reselect to modify."))
                     self.modify = False
                 self.suspend = True
                 raise InvalidInput("admin prompt", cmd + (' ' + ' '.join(args) if args is not None else ''))
@@ -99,9 +98,9 @@ class Admin:
         cmd, args = None, None
         if self.modify:
             print(msg("Choose (e)dit or (r)emove\nLeave blank or call other command to cancel."))
-            raw_input = input(lred_b(">> ")).split()
+            raw_input = input(cyan_b(">> ")).split()
         else:
-            raw_input = input(lred_b("> ")).split()
+            raw_input = input(cyan_b("> ")).split()
         if len(raw_input) >= 1:
             cmd = raw_input[0]
             if len(raw_input) > 1:
@@ -120,15 +119,15 @@ class Admin:
             self.suspend = False
 
         elif self.output == "deleted":
-            print(msg("Note deleted."))
+            print(suc("Note deleted."))
             self.refresh = True
 
         elif self.output == "added":
-            print(msg("Note added."))
+            print(suc("Note added."))
             self.refresh = True
 
         elif self.output == "cancel":
-            print(msg("Nothing changed. Select again to modify."))
+            print(warn("Nothing changed. Select again to modify."))
             self.suspend = False
 
         elif self.output == "next":
@@ -158,13 +157,11 @@ class Admin:
         self.refresh = False
 
     def __debug(self):
-        print("#################################")
-        print("query:", self.query)
-        print("output:", self.output)
-        print("selection:", self.selection)
-        print("listing:", self.listing)
-        print("modify:", self.modify)
-        print("suspend:", self.suspend)
-        print("refresh:", self.refresh)
-        print("done:", self.done)
-        print("#################################")
+        debug(f"query: {self.query}")
+        debug(f"output: {self.output}")
+        debug(f"selection: {self.selection}")
+        debug(f"listing: {self.listing}")
+        debug(f"modify: {self.modify}")
+        debug(f"suspend: {self.suspend}")
+        debug(f"refresh: {self.refresh}")
+        debug(f"done: {self.done}")
