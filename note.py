@@ -1,5 +1,5 @@
 import textwrap
-from util import date_obj, date_dif_today, MAX_WIDTH, line, gray
+import ut as ut
 
 
 # TODO: inserting a note without a title to db gives title a value of "None" rather than a none-type. \
@@ -13,39 +13,65 @@ class Note:
         self.date_m = date_m
         self.tags = tags
 
-    def print_oneline(self):
-        trim = MAX_WIDTH - 8
+    def print_trunc(self):
+        trim = ut.MAX_WIDTH - 8
         no_space = False
+        mid = ut.gray('   │ ')
+        end = ut.gray('   └ ')
         # print("DIF:", date_dif_today(self.get_date_obj()))
-        # print(self.date, end=' ')
-        if self.title != "None":
+        date = self.get_date_obj()
+        date = str(date.month) + '.' + str(date.day) + '.' + str(date.year)
+
+        # title
+        if self.title != "None" and self.title is not None:
             if len(self.title) > trim:
-                print(self.oneline(self.title)[0:trim], end=gray('...\n'))
+                print(ut.bld(self.oneline(self.title)[0:trim]), end=ut.gray(' ...\n'))
                 no_space = True
             else:
-                print(self.title, end=': ')
-        trim -= len(self.title)
+                print(ut.bld(self.title), end=': ')
+            trim -= len(self.title)
+        # note
         if not no_space:
             if len(self.body) > trim:
-                print(self.body.replace('\n', ' ')[0:trim], end=gray('...\n'))
+                print(ut.bld(self.body.replace('\n', ' ')[0:trim]), end=ut.gray(' ...\n'))
             else:
-                print(self.body.replace('\n', ' '))
-
-    def print_multiline(self):
-        SEP = max(len(self.title), len(self.body), len(self.date_c))
-        SEP = MAX_WIDTH if SEP > MAX_WIDTH else SEP
-        print(line(length=SEP))
-        print(self.date_c)
-        if self.title != "None":
-            print(textwrap.fill(self.title, width=MAX_WIDTH))
-        if len(self.body) > MAX_WIDTH:
-            print(textwrap.fill(self.body, width=MAX_WIDTH))
+                print(ut.bld(self.body.replace('\n', ' ')))
+        # date / tags
+        print(mid + date)
+        if self.tags is not None:
+            # todo tags not printing
+            print(end + ut.gray("Tags: " ', '.join(self.tags)))
         else:
-            print(self.body)
-        print(line(length=SEP))
+            print(end + ut.gray("Tags: notag"))
+        print()
+
+    def print_full(self):
+        # compute space for printing
+        if self.title is not None and self.title != "None":
+            SEP = max(len(self.title), len(self.body), len(self.date_c))
+        else:
+            SEP = max(len(self.body), len(self.date_c))
+        SEP = ut.MAX_WIDTH if SEP > ut.MAX_WIDTH else SEP
+        print(ut.line(length=SEP))
+
+        # title/body
+        if self.title is not None and self.title != "None":
+            print(ut.bld(textwrap.fill(self.title, width=ut.MAX_WIDTH)))
+        if len(self.body) > ut.MAX_WIDTH:
+            print(ut.bld(textwrap.fill(self.body, width=ut.MAX_WIDTH)))
+        else:
+            print(ut.bld(self.body))
+
+        # date/tags
+        print(self.date_c)
+        if self.tags:
+            print(ut.gray(ut.itl("Tags: " ', '.join(self.tags))))
+        else:
+            print(ut.gray(ut.itl("Tags: notag")))
+        print(ut.line(length=SEP))
 
     def get_date_obj(self):
-        return date_obj(self.date_c)
+        return ut.date_obj(self.date_c)
 
     @staticmethod
     def oneline(string):

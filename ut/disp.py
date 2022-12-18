@@ -3,7 +3,6 @@ MAX_WIDTH = 80
 # Output text formatting
 
 
-# Escape sequences for bold, italics, underline
 class Fmt:
     BLD = '\033[1m'
     ITL = '\033[3m'
@@ -11,22 +10,17 @@ class Fmt:
     END = '\033[0m'
 
 
-# Formats passed string with bold
 def bld(string):
     return Fmt.BLD + string + Fmt.END
 
 
-# Formats passed string with italics
 def itl(string):
     return Fmt.ITL + string + Fmt.END
 
 
-# Formats passed string with underline
 def und(string):
     return Fmt.UND + string + Fmt.END
 
-
-# Qnot communication messages
 
 def msg(string):
     return bld(Fore.CYAN + string)
@@ -46,7 +40,7 @@ def suc(string):
 
 # Formats passed string as a header
 def heading(string):
-    return und(string)
+    return grn_b(string)
 
 
 # Formats passed string as code
@@ -67,12 +61,24 @@ def lred_b(string):
     return Fore.LIGHTRED_EX + bld(string) + Fmt.END
 
 
-def cyan_b(string):
+def grn_b(string):
+    return Fore.GREEN + bld(string) + Fmt.END
+
+
+def yel_b(string):
+    return Fore.YELLOW + bld(string) + Fmt.END
+
+
+def lcyan(string):
     return Fore.LIGHTCYAN_EX + string + Fmt.END
 
 
 def lyel(string):
     return Fore.LIGHTYELLOW_EX + string + Fmt.END
+
+
+def lblk(string):
+    return Fore.LIGHTBLACK_EX + string + Fmt.END
 
 
 def gray(string):

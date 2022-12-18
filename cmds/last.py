@@ -1,7 +1,7 @@
 from db_access import select_last_note, select_notetags
 from exceptions import MatchNotFound, InvalidInput
 from listing import Listing
-from util import debug
+from ut import add_tags_to_note, debug
 
 
 def exec_last(args=None):
@@ -11,19 +11,8 @@ def exec_last(args=None):
         num = int(args[0])
     else:
         num = 1
-    res = select_last_note(num)
-    if res is None or len(res) == 0:
+    result = select_last_note(num)
+    if result is None or len(result) == 0:
         raise MatchNotFound(f"last {num} created")
 
-    new_res = []
-    for note in res:
-        if note is None:
-            break
-        new_tags = None
-        raw_tags = select_notetags(note[0])
-        if raw_tags is not None:
-            new_tags = [tag for tup in raw_tags for tag in tup]
-        note += (new_tags,)
-        new_res.append(note)
-
-    return Listing(f"Last {num} created", new_res)
+    return Listing(f"Last {num} created", add_tags_to_note(result))

@@ -2,8 +2,8 @@ from .help import exec_help
 from .quick import exec_quick
 from .remove import exec_remove
 from .full import exec_edit
-from .find import exec_find
+from .find import exec_get
 from .default import exec_default
 from .list import exec_list
-from .quit import exec_quit
 from .last import exec_last
+from .search import exec_search

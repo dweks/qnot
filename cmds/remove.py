@@ -1,5 +1,5 @@
 from db_access import delete_note, select_notetags
-from util import imp, debug
+from ut import imp, debug
 from exceptions import SelectBeforeModify
 
 
@@ -9,7 +9,7 @@ def exec_remove(note) -> str:
         raise SelectBeforeModify("remove.")
     tags = []
     print(imp('\nPERMANENTLY DELETING NOTE:'))
-    note.print_multiline()
+    note.print_full()
     response = input("Confirm Y/n > ")
     if response == 'Y':
         if note.tags and len(note.tags) > 0:

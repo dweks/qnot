@@ -1,6 +1,6 @@
 import sqlite3 as SQL
 from exceptions import MissingArguments, MatchNotFound
-from util import debug
+from ut import debug
 
 # Paths and filenames
 DB_PATH = ".notes.db"
@@ -73,6 +73,7 @@ def create_tag_table(tag):
                 REFERENCES Notes (note_id)
                 ON DELETE CASCADE
                 ON UPDATE SET NULL
+            UNIQUE(note_id)
         ); """
     ex(sql, create_tag_table.__name__)
 
@@ -97,25 +98,26 @@ def insert_tags_to_notetags(note_id, tag):
 
 def tag_exists(tag):
     sql = "SELECT EXISTS(SELECT tag_id FROM Tags WHERE tag_id = ?);"
-    return ex(sql, tag_exists.__name__, params=[tag], fetchone=True)
+    res = ex(sql, tag_exists.__name__, params=[tag], fetchone=True)
+    if not res or res[0] == 0:
+        return False
+    return True
 
 
 def insert_note_to_notes(note):
-    sql = f"""
+    sql = """
         INSERT OR REPLACE INTO Notes (
             note_id,
             title,
             body,
             date_c,
             date_m
-        ) VALUES (
-            "{note.id}",
-            "{note.title}",
-            "{note.body}",
-            "{note.date_c}",
-            "{note.date_m}"
-        ); """
-    ex(sql, insert_note_to_notes.__name__)
+        ) VALUES ( ?, ?, ?, ?, ? ); """
+    ex(
+        sql,
+        insert_note_to_notes.__name__,
+        params=[note.id, note.title, note.body, note.date_c, note.date_m]
+    )
 
 
 # Inserts a single unique tag to table of all tags
@@ -133,20 +135,15 @@ def insert_note_to_tag(tag, note_id):
 def select_notes_tagged_with(tags) -> list or str:
     if tags is None or len(tags) == 0:
         raise MissingArguments(select_notes_tagged_with.__name__)
+
     for tag in tags:
-        t = tag_exists(tag)
-        if t is None or len(t) == 0:
+        if not tag_exists(tag):
             raise MatchNotFound(', '.join(tags))
-    sql = f"""
-        SELECT
-            note_id,
-            title,
-            body,
-            date_c,
-            date_m
-        FROM Notes """
+
+    sql = "SELECT A.note_id, title, body, date_c, date_m FROM Notes A"
     for tag in tags:
-        sql += f" JOIN {T_PREP + tag} ON {T_PREP + tag}.note_id = Notes.note_id"
+        if check_table_exists(T_PREP + tag):
+            sql += f" JOIN {T_PREP + tag} ON {T_PREP + tag}.note_id = A.note_id"
     sql += ';'
 
     return ex(sql, select_notes_tagged_with.__name__, fetchall=True)
@@ -200,3 +197,9 @@ def check_table_exists(name):
     if len(res) > 0:
         return True
     return False
+
+
+def select_like(query):
+    new_query = '%' + ' '.join(query) + '%'
+    sql = "SELECT * FROM Notes WHERE Notes.body LIKE ?"
+    return ex(sql, select_like.__name__, params=[new_query], fetchall=True)

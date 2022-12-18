@@ -1,4 +1,4 @@
-from util import os, sys
+from ut import os, sys
 
 
 # Interacting with the user's file system
@@ -32,6 +32,8 @@ def user_editor():
 
 # Writes string to a file
 def write_to_file(note, path):
-    title_maybe = note.title + " :: " if note.title != "None" else ''
+    title_maybe = ''
+    if note.title is not None and note.title != "None":
+        title_maybe = note.title + " :: "
     with open(path, "w") as notes_file:
         notes_file.write(title_maybe + note.body)

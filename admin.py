@@ -1,5 +1,5 @@
 from dispatch import admin_dispatch as dispatch, mod_dispatch
-from util import msg, lred_b, lyel, warn, debug, suc, cyan_b
+from ut import msg, lred_b, lyel, warn, debug, suc
 from listing import Listing
 from exceptions import InvalidInput, MatchNotFound
 
@@ -58,13 +58,17 @@ class Admin:
                 if self.modify:
                     print(warn("Modify cancelled, reselect to modify."))
                     self.modify = False
+                    self.selection = None
                 self.output = self.__execute(cmd, args)
 
             elif cmd in mod_dispatch.keys():
                 # print("// mod dispatch:", cmd)
-                self.output = self.__execute(cmd, self.selection)
-                self.modify = False
-                self.selection = None
+                if not self.modify:
+                    self.output = None
+                else:
+                    self.output = self.__execute(cmd, self.selection)
+                    self.modify = False
+                    self.selection = None
 
             elif cmd.isdigit():
                 # print("// is digit:", cmd)
@@ -74,7 +78,7 @@ class Admin:
                 self.output = None
                 self.selection = self.listing.retrieve(int(cmd))
                 print(lyel(f"\nViewing {int(cmd)}"))
-                self.selection.print_multiline()
+                self.selection.print_full()
 
             else:
                 if self.modify:
@@ -88,6 +92,10 @@ class Admin:
             self.__handle_output(cmd, args)
 
         except Exception as e:
+            self.modify = False
+            self.output = None
+            self.selection = None
+            self.suspend = True
             print(e)
 
         if self.done:
@@ -98,9 +106,9 @@ class Admin:
         cmd, args = None, None
         if self.modify:
             print(msg("Choose (e)dit or (r)emove\nLeave blank or call other command to cancel."))
-            raw_input = input(cyan_b(">> ")).split()
+            raw_input = input(lred_b(">> ")).split()
         else:
-            raw_input = input(cyan_b("> ")).split()
+            raw_input = input(lred_b("> ")).split()
         if len(raw_input) >= 1:
             cmd = raw_input[0]
             if len(raw_input) > 1:

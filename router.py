@@ -1,6 +1,6 @@
 from admin import Admin
 from standard import Standard
-from util import re
+from ut import re
 from dispatch import admin_dispatch, standard_dispatch
 import curses
 

@@ -1,4 +1,4 @@
-from util import re, date_enc, date_norm
+from ut import re, date_enc, date_norm
 from note import Note
 TITLE_DELIM = '::'
 TAG_PATTERN = r"\+[a-zA-Z]+\w*\s*"
@@ -12,7 +12,6 @@ TAG_PATTERN = r"\+[a-zA-Z]+\w*\s*"
 #   Anything other than a found title is considered the
 #   body of the note.
 def prs_note(raw_note, note_id, date_c, date_m):
-    # TODO tags returned from database have spaces after, need to strip?
     title, body, tags = None, None, None
 
     tags = parse_tags(raw_note)
@@ -36,6 +35,7 @@ def parse_tags(to_parse):
     if tags_maybe is None:
         return []
     tags = [tag.strip(' ') for tag in tags_maybe]
+    tags = [tag.strip('\n') for tag in tags]
     tags = [tag.lstrip('+') for tag in tags]
     return tags
 
@@ -44,5 +44,3 @@ def remove_tag_notation(to_parse):
     split = to_parse.split(' ')
     split = [part.lstrip('+') for part in split]
     return ' '.join(split)
-
-

@@ -1,4 +1,4 @@
-from util import warn
+from ut import warn
 
 
 class InvalidInput(Exception):
@@ -23,7 +23,7 @@ class OutsidePageBounds(Exception):
         self.err = err
 
     def __str__(self):
-        return warn(f"No more pages; total pages: {self.err}")
+        return warn(f"Already on {self.err} page.")
 
 
 class NoPagesInListing(Exception):
@@ -36,7 +36,7 @@ class MissingArguments(Exception):
         self.err = err
 
     def __str__(self):
-        return warn(f"'{self.err}' must take arguments")
+        return warn(f"'{self.err}' must take arguments.")
 
 
 class MissingSearchQuery(Exception):
@@ -44,7 +44,7 @@ class MissingSearchQuery(Exception):
         self.err = err
 
     def __str__(self):
-        return warn(f"'{self.err}' must take a search query")
+        return warn(f"'{self.err}' must take a search query.")
 
 
 class MatchNotFound(Exception):

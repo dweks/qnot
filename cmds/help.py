@@ -1,4 +1,4 @@
-from util import bld, itl, und, heading, code
+from ut import bld, itl, und, heading, code
 from exceptions import InvalidInput
 
 
@@ -6,30 +6,12 @@ from exceptions import InvalidInput
 # Help uses a dispatch table for the help 'topics'. The cmds's parameterless
 # behavior is to TODO display a list of available help topics
 def exec_help(args):
-    message_table = {
-        None: BASIC,
-        'view': VIEW,
-        'edit': EDIT,
-        'full': FULL,
-        'tag': TAG,
-        'title': TITLE,
-        'remove': REMOVE,
-        'find': FIND,
-        'add': ADD,
-        'list': LIST,
-        'next': NEXT,
-        'prev': PREV,
-        'last': LAST,
-        'today': TODAY,
-        'week': WEEK,
-        'day': DAY,
-    }
-
+    # todo set default help message for empty args
     arg = None if not args else args[0]
-    if arg not in message_table.keys():
+    if arg not in help_dispatch.keys():
         raise InvalidInput("help", arg)
     else:
-        print(message_table[arg])
+        print(help_dispatch[arg])
     return "suspend"
 
 
@@ -39,15 +21,15 @@ FULL = "h_full"
 TAG = "h_tag"
 TITLE = "h_title"
 REMOVE = "h_remove"
-FIND = f"""
-{heading("FIND")}
-Callable from command-line and admin, searches for {bld("tags")} by default:
-Command line: {code("  qnot -find ...")}
-Admin:{code("  find ...")}
+FIND = f"""{heading(f"How to use the 'get' command:")}
+{itl("Purpose")}: Retrieves notes by tag
+{itl("Context")}: Linux and qnot admin mode
+{itl("Arguments")}: One or more tags with optional filter 
+{itl("Filters")}: Only retrieve notes created in time range: today, week, day
 
-Searching other sections of note: title, body, tag
-General:{code("  find title ...")}
-
+{und("Basic Usage")}: 
+  Linux:\n{code("    qnot -get [filter] <tag>")}
+  Admin:\n{code("    get [filter] <tag>")}
 """
 ADD = "h_add"
 LIST = "h_list"
@@ -97,3 +79,32 @@ If needed, qnot will execute a program with a menu with prompt.
 This occurs if no arguments are given for a cmds that needs them.
 When interface mode starts, exit without changing by entering {bld("q")} anytime.
 """
+
+help_dispatch = {
+    'v': VIEW,
+    'view': VIEW,
+    'e': EDIT,
+    'edit': EDIT,
+    'full': FULL,
+    'r': REMOVE,
+    'remove': REMOVE,
+    'g': FIND,
+    'get': FIND,
+    'a': ADD,
+    'add': ADD,
+    'ls': LIST,
+    'list': LIST,
+
+    'n': NEXT,
+    'next': NEXT,
+    'p': PREV,
+    'prev': PREV,
+    'l': LAST,
+    'last': LAST,
+
+    'tag': TAG,
+    'title': TITLE,
+    'today': TODAY,
+    'week': WEEK,
+    'day': DAY,
+}
