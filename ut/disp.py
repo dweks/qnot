@@ -54,36 +54,32 @@ def line(char=None, length=None):
     if not length:
         length = MAX_WIDTH
 
-    return Fore.LIGHTBLACK_EX + char * length + Fmt.END
+    return Fore.LIGHTBLACK_EX + char * length + Fore.RESET
 
 
 def lred_b(string):
-    return Fore.LIGHTRED_EX + bld(string) + Fmt.END
+    return Fore.LIGHTRED_EX + bld(string) + Fore.RESET
 
 
 def grn_b(string):
-    return Fore.GREEN + bld(string) + Fmt.END
+    return Fore.GREEN + bld(string) + Fore.RESET
 
 
 def yel_b(string):
-    return Fore.YELLOW + bld(string) + Fmt.END
+    return Fore.YELLOW + bld(string) + Fore.RESET
 
 
 def lcyan(string):
-    return Fore.LIGHTCYAN_EX + string + Fmt.END
+    return Fore.LIGHTCYAN_EX + string + Fore.RESET
 
 
 def lyel(string):
-    return Fore.LIGHTYELLOW_EX + string + Fmt.END
-
-
-def lblk(string):
-    return Fore.LIGHTBLACK_EX + string + Fmt.END
+    return Fore.LIGHTYELLOW_EX + string + Fore.RESET
 
 
 def gray(string):
-    return Fore.LIGHTBLACK_EX + string + Fmt.END
+    return Fore.LIGHTBLACK_EX + string + Fore.RESET
 
 
 def debug(string):
-    print(Fore.LIGHTMAGENTA_EX + str(string) + Fmt.END)
+    print(Fore.LIGHTMAGENTA_EX + str(string) + Fore.RESET)

@@ -1,12 +1,16 @@
-from dispatch import admin_dispatch as dispatch, mod_dispatch
+from dispatch import admin_dispatch, mod_dispatch
 from ut import msg, lred_b, lyel, warn, debug, suc
 from listing import Listing
-from exceptions import InvalidInput, MatchNotFound
+from exceptions import InvalidInput, SelectBeforeModify, ListBeforeSelect
+from cmds import exec_last
+from carg import Carg
+
+DEF_LAST = 5
 
 
 # The user interface for qnot. 'Admin mode' only instantiates implicitly.
-# It cannot be called with a specific cmds.
-# When a user enters certain qnot commands from the Linux cmds-line,
+# It cannot be called with a specific carg.cs.
+# When a user enters certain qnot commands from the Linux carg.cs-line,
 # they will open in admin mode. If a user executes qnot without any arguments,
 # admin mode begins.
 #
@@ -15,85 +19,36 @@ from exceptions import InvalidInput, MatchNotFound
 # or removing notes, managing tags, changing settings, or searching
 # for notes is done here.
 class Admin:
-    # TODO change default startup execution
-    def __init__(self, cmd="last", args=None):
-        if args is None:
-            args = ['5']
+    def __init__(self, carg=None):
         self.selection = None
         self.done = False
         self.modify = False
-        self.query = cmd, args
         self.suspend = False
-        self.refresh = False
-
-        try:
-            self.output = self.__execute(cmd, args)
-        except MatchNotFound:
-            self.output = None
-        self.listing = self.output if isinstance(self.output, Listing) else None
-
+        self.listing = None
+        self.listing_carg = None
+        self.out = self.execute(carg)
+        if type(self.out) is Listing:
+            self.listing = self.out
+            self.listing_carg = carg
         self.interface()
 
     def interface(self):
         # self.__debug()
-        if self.refresh:
-            self.__refresh()
-        if self.listing is not None and not self.suspend:
-            self.listing.display_page()
-        elif not self.suspend:
-            print(warn("No notes to list; add note, or search for notes to list here."))
         try:
-            cmd, args = self.__prompt()
+            if type(self.listing) is Listing and not self.suspend:
+                self.listing.display_page()
+            elif not self.suspend:
+                print(warn("No notes to list; add note, or search for notes to list here."))
 
-            if cmd is None:
-                # print("// cmd is None:", cmd)
-                if self.modify:
-                    print(warn("Modify cancelled, reselect to modify."))
-                    self.modify = False
-                self.suspend = True
-                self.output = None
-
-            elif cmd in dispatch.keys():
-                # print("// admin dispatch:", cmd)
-                if self.modify:
-                    print(warn("Modify cancelled, reselect to modify."))
-                    self.modify = False
-                    self.selection = None
-                self.output = self.__execute(cmd, args)
-
-            elif cmd in mod_dispatch.keys():
-                # print("// mod dispatch:", cmd)
-                if not self.modify:
-                    self.output = None
-                else:
-                    self.output = self.__execute(cmd, self.selection)
-                    self.modify = False
-                    self.selection = None
-
-            elif cmd.isdigit():
-                # print("// is digit:", cmd)
-                if self.modify:
-                    print(warn("Modify cancelled, reselect to modify."))
-                self.modify = True
-                self.output = None
-                self.selection = self.listing.retrieve(int(cmd))
-                print(lyel(f"\nViewing {int(cmd)}"))
-                self.selection.print_full()
-
-            else:
-                if self.modify:
-                    print(warn("Modify cancelled, reselect to modify."))
-                    self.modify = False
-                self.suspend = True
-                raise InvalidInput("admin prompt", cmd + (' ' + ' '.join(args) if args is not None else ''))
-
-            self.suspend = True
-            self.refresh = False
-            self.__handle_output(cmd, args)
+            carg = self.prompt()
+            # debug(f"carg after prompt: {carg.cmd_str()}")
+            self.out = self.execute(carg)
+            # debug(f"output after exec: {self.out}")
+            self.suspend = self.handle_output(carg)
 
         except Exception as e:
             self.modify = False
-            self.output = None
+            self.out = None
             self.selection = None
             self.suspend = True
             print(e)
@@ -102,71 +57,101 @@ class Admin:
             return
         self.interface()
 
-    def __prompt(self):
-        cmd, args = None, None
+    def prompt(self):
+        carg = Carg(None, None)
+        p = lred_b("> ")
         if self.modify:
-            print(msg("Choose (e)dit or (r)emove\nLeave blank or call other command to cancel."))
-            raw_input = input(lred_b(">> ")).split()
-        else:
-            raw_input = input(lred_b("> ")).split()
+            print(msg("Choose (e)dit, (d)elete, or (ex)port\nLeave blank or call other command to cancel."))
+            p = lred_b(">> ")
+        raw_input = input(p).split()
         if len(raw_input) >= 1:
-            cmd = raw_input[0]
+            carg.c = raw_input[0]
             if len(raw_input) > 1:
-                args = raw_input[1:]
-        return cmd, args
+                carg.a = raw_input[1:]
+        return carg
 
-    def __execute(self, cmd, args):
-        if self.modify:
-            return mod_dispatch[cmd](args)
-        return dispatch[cmd](args)
+    def execute(self, carg):
+        if not carg.is_mod() and self.modify:
+            print(warn("Modify cancelled, reselect to modify."))
+            self.modify = False
+            self.selection = None
+        if carg.is_none():
+            # debug("carg.is_none")
+            return None
+        elif carg.is_adm():
+            # debug("carg.is_adm")
+            return admin_dispatch[carg.c](carg.a)
+        elif carg.is_mod():
+            # debug("carg.is_adm")
+            if not self.modify:
+                raise SelectBeforeModify("modify")
+            else:
+                return mod_dispatch[carg.c](self.selection)
+        elif carg.is_sel():
+            # debug("carg.is_sel")
+            self.modify = True
+            if type(self.listing) is not Listing:
+                raise ListBeforeSelect()
+            self.selection = self.listing.retrieve(int(carg.c))
+            # todo this heading needs to be dynamic when range select is implemented
+            print(lyel(f"\nViewing {int(carg.c)}"))
+            self.selection.print_full()
+            return "selection"
+        else:
+            # debug(f"carg is else: {carg.c}")
+            raise InvalidInput("admin prompt", carg.c + (' ' + ' '.join(carg.a) if carg.a is not None else ''))
 
-    def __handle_output(self, cmd, args):
-        if isinstance(self.output, Listing):
-            self.query = cmd, args
-            self.listing = self.output
-            self.suspend = False
-
-        elif self.output == "deleted":
+    def handle_output(self, carg):
+        if type(self.out) is Listing:
+            self.listing_carg = carg
+            self.listing = self.out
+            self.out = None
+            return False
+        elif self.out == "deleted":
+            self.modify = False
             print(suc("Note deleted."))
-            self.refresh = True
-
-        elif self.output == "added":
+            self.refresh()
+            return True
+        elif self.out == "added":
+            self.modify = False
             print(suc("Note added."))
-            self.refresh = True
-
-        elif self.output == "cancel":
-            print(warn("Nothing changed. Select again to modify."))
-            self.suspend = False
-
-        elif self.output == "next":
+            self.refresh()
+            return True
+        elif self.out == "exported":
+            self.modify = False
+            print(suc(f"Note exported."))
+            self.refresh()
+            return True
+        elif self.out == "cancel":
+            print(warn("Nothing changed."))
+            return True
+        elif self.out == "next":
             if self.listing.next_page() is not None:
-                self.suspend = False
-
-        elif self.output == "prev":
-            self.suspend = True
+                return False
+            return True
+        elif self.out == "prev":
             if self.listing.prev_page() is not None:
                 self.suspend = False
-
-        elif self.output == "suspend":
-            self.suspend = True
-
-        elif self.output == "show":
-            self.suspend = False
-
-        elif self.output == "quit":
+            return True
+        elif self.out == "suspend":
+            return True
+        elif self.out == "show":
+            return False
+        elif self.out == "quit":
             self.done = True
-
+            return True
         else:
-            self.suspend = True
+            return True
 
-    def __refresh(self):
-        ret = self.__execute(self.query[0], self.query[1])
-        self.listing = ret if isinstance(ret, Listing) else None
-        self.refresh = False
+    def refresh(self):
+        self.listing = None
+        self.out = self.execute(self.listing_carg)
+        if type(self.out) is Listing:
+            self.listing = self.out
 
     def __debug(self):
-        debug(f"query: {self.query}")
-        debug(f"output: {self.output}")
+        debug(f"query: {self.listing_carg}")
+        debug(f"output: {self.out}")
         debug(f"selection: {self.selection}")
         debug(f"listing: {self.listing}")
         debug(f"modify: {self.modify}")

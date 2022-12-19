@@ -20,7 +20,7 @@ class Note:
         end = ut.gray('   └ ')
         # print("DIF:", date_dif_today(self.get_date_obj()))
         date = self.get_date_obj()
-        date = str(date.month) + '.' + str(date.day) + '.' + str(date.year)
+        date = str(date.month) + '/' + str(date.day) + '/' + str(date.year)
 
         # title
         if self.title != "None" and self.title is not None:
@@ -40,9 +40,9 @@ class Note:
         print(mid + date)
         if self.tags is not None:
             # todo tags not printing
-            print(end + ut.gray("Tags: " ', '.join(self.tags)))
+            print(end + ut.gray(', '.join(self.tags)))
         else:
-            print(end + ut.gray("Tags: notag"))
+            print(end + ut.gray("notag"))
         print()
 
     def print_full(self):
@@ -52,22 +52,24 @@ class Note:
         else:
             SEP = max(len(self.body), len(self.date_c))
         SEP = ut.MAX_WIDTH if SEP > ut.MAX_WIDTH else SEP
+
         print(ut.line(length=SEP))
 
         # title/body
         if self.title is not None and self.title != "None":
-            print(ut.bld(textwrap.fill(self.title, width=ut.MAX_WIDTH)))
+            print(ut.und(textwrap.fill(self.title, width=ut.MAX_WIDTH, replace_whitespace=False)))
         if len(self.body) > ut.MAX_WIDTH:
-            print(ut.bld(textwrap.fill(self.body, width=ut.MAX_WIDTH)))
+            print(ut.bld(textwrap.fill(self.body, width=ut.MAX_WIDTH, replace_whitespace=False)))
         else:
             print(ut.bld(self.body))
 
         # date/tags
         print(self.date_c)
         if self.tags:
-            print(ut.gray(ut.itl("Tags: " ', '.join(self.tags))))
+            print(ut.gray(ut.itl(', '.join(self.tags))))
         else:
-            print(ut.gray(ut.itl("Tags: notag")))
+            print(ut.gray(ut.itl("notag")))
+
         print(ut.line(length=SEP))
 
     def get_date_obj(self):

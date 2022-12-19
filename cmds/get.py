@@ -1,7 +1,7 @@
 from db_access import select_notes_tagged_with
+from exceptions import MissingSearchQuery, MatchNotFound
 from listing import Listing
-from exceptions import MissingArguments, MissingSearchQuery, MatchNotFound
-from ut import add_tags_to_note, debug
+from ut import add_tags_to_note
 
 
 # Entry-point for cmds called from dispatch table in Admin

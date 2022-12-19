@@ -15,7 +15,7 @@ class ListingItemNotExist(Exception):
         self.err = err
 
     def __str__(self):
-        return warn(f"Index provided does not correspond to an item: {self.err}")
+        return warn(f"Number provided does not correspond to an item: {self.err}")
 
 
 class OutsidePageBounds(Exception):
@@ -63,9 +63,22 @@ class SelectBeforeModify(Exception):
         return warn(f"Select a note to {self.err}")
 
 
+class NoSuchCommand(Exception):
+    def __init__(self, err):
+        self.err = err
+
+    def __str__(self):
+        return warn(f"No such command for qnot: {self.err}")
+
+
 class NotListable(Exception):
     def __init__(self, err):
         self.err = err
 
     def __str__(self):
         return warn(f"Nothing to list for: {self.err}")
+
+
+class ListBeforeSelect(Exception):
+    def __str__(self):
+        return warn(f"Find notes to select.")

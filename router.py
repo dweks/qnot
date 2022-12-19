@@ -1,8 +1,10 @@
 from admin import Admin
 from standard import Standard
 from ut import re
-from dispatch import admin_dispatch, standard_dispatch
-import curses
+from carg import Carg
+from exceptions import NoSuchCommand
+
+DEF_LAST = "5"
 
 
 # The router determines the correct context for execution of commands from
@@ -15,20 +17,18 @@ import curses
 #
 # If a user provides NO arguments from the cmds-line (only `qnot`) admin
 # mode is instantiated.
-
 def router(argv):
     if len(argv) == 1:
-        Admin()
+        Admin(Carg("last", [DEF_LAST]))
 
     elif re.findall(r"^-[a-zA-Z]+$", argv[1]):
-        cmd = argv[1].lstrip('-').lower()
-        args = argv[2:]
-        if cmd in admin_dispatch.keys():
-            Admin(cmd, args)
-        elif cmd in standard_dispatch.keys():
-            Standard(cmd, args)
+        carg = Carg(argv[1].lstrip('-').lower(), argv[2:])
+        if carg.is_adm():
+            Admin(carg)
+        elif carg.is_std():
+            Standard(carg)
         else:
-            raise ValueError(f"Invalid command: '{cmd}'")
+            raise NoSuchCommand(carg.c)
     else:
         args = argv[1:]
-        Standard('quick', args)
+        Standard(Carg('add', args))

@@ -1,8 +1,8 @@
-from db_access import select_all_tags
-from exceptions import NotListable
-import ut
-from .help import help_dispatch
 import dispatch as dsp
+import ut
+from db_access import select_all_tags_and_count
+from exceptions import NotListable
+from .help import help_dispatch
 
 
 # Lists things like commands, tags, help topics, etc
@@ -18,7 +18,7 @@ def exec_list(args):
 
 
 def list_tags():
-    result = select_all_tags()
+    result = select_all_tags_and_count()
     print(ut.msg("List of all used tags:"))
     printer([tag[0] for tag in result])
     print("Usage example (get notes by tag): " + ut.bld("get <tag>"))
@@ -38,7 +38,7 @@ def list_commands():
     print("Usage: " + ut.bld("<command> [argument]\n"))
 
     print(ut.und("Standard mode (from Linux):"))
-    printer(list(dsp.standard_dispatch.keys()))
+    printer(list(dsp.std_dispatch.keys()))
     print("Usage: " + ut.bld("qnot [command] [argument]\n"))
 
     print(ut.und("Modify mode (after selecting note):"))
@@ -67,4 +67,3 @@ lists = {
     'command': list_commands,
     'cmd': list_commands,
 }
-

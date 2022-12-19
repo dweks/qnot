@@ -1,5 +1,5 @@
-from ut import bld, itl, und, heading, code
 from exceptions import InvalidInput
+from ut import bld, itl, und, heading, code
 
 
 # Entry-point for cmds called from dispatch table in Admin or Standard

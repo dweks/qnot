@@ -1,12 +1,6 @@
-from dispatch import standard_dispatch as dispatch
+from dispatch import std_dispatch
 
 
 class Standard:
-    def __init__(self, cmd=None, args=None):
-        self.execute(cmd, args)
-
-    def execute(self, cmd, args):
-        if cmd in dispatch.keys():
-            return dispatch[cmd](args)
-
-        raise ValueError(f"Invalid command: '{cmd}'")
+    def __init__(self, carg):
+        std_dispatch[carg.c](carg.a)

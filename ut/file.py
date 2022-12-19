@@ -31,7 +31,7 @@ def user_editor():
 
 
 # Writes string to a file
-def write_to_file(note, path):
+def write_note_to_file(note, path):
     title_maybe = ''
     if note.title is not None and note.title != "None":
         title_maybe = note.title + " :: "

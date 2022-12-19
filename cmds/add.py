@@ -6,7 +6,7 @@ from exceptions import MissingArguments
 #
 # Quick is the implicit cmds called when a user creates a note from
 # the cmds-line. It is not callable from any other context.
-def exec_quick(args):
+def exec_add(args):
     if not args:
         raise MissingArguments("add")
     note_id = ut.date_enc()

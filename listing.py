@@ -32,13 +32,10 @@ class Listing:
             item_id = self.pages[self.current_page].index(item) + 1 + (self.current_page - 1) * ITEMS_PER_PAGE
             spacer = '  ┬ ' if item_id < 10 else ' ┬ ' if item_id < 100 else '┬ '
 
-            print(ut.lyel(str(item_id)), end=ut.lblk(spacer))
+            print(ut.lyel(str(item_id)), end=ut.gray(spacer))
             item.print_trunc()
 
-        if self.current_page == self.page_count:
-            print(ut.bld("Page ") + ut.yel_b(f"{self.current_page}") + ut.lblk(f" / {self.page_count}"))
-        else:
-            print(ut.bld("Page ") + f"{self.current_page}" + ut.lblk(f" / {self.page_count}"))
+        print("Page " + ut.bld(f"{self.current_page}") + ut.gray(f" / {self.page_count}"))
 
     def next_page(self):
         if self.current_page + 1 > self.page_count:
@@ -55,6 +52,8 @@ class Listing:
             return True
 
     def retrieve(self, index):
+        # pass
+        # todo need to redo this to accept ranges
         if index - 1 < 0 or index > self.item_count:
             raise ListingItemNotExist(index)
         return self.pages[math.ceil(index / ITEMS_PER_PAGE)][(index - 1) % ITEMS_PER_PAGE]

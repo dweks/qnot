@@ -131,8 +131,7 @@ def insert_note_to_tag(tag, note_id):
     ex(sql, insert_note_to_tag.__name__, params=[note_id])
 
 
-# Returns a list of tuples (even if only one found)
-def select_notes_tagged_with(tags) -> list or str:
+def select_notes_tagged_with(tags):
     if tags is None or len(tags) == 0:
         raise MissingArguments(select_notes_tagged_with.__name__)
 
@@ -173,13 +172,15 @@ def delete_note_from_tag(note_id, tag):
         return None
 
 
-def select_all_tags():
+def select_all_tags_and_count():
     sql = "SELECT tag_id FROM Tags;"
-    return ex(sql, select_all_tags.__name__, fetchall=True)
+    # todo find way to return count of each tag with notes
+    # sql = f"SELECT tag_id, COUNT(SELECT * FROM Notes JOIN {T_PREP + } ON Notes.note_id) FROM Tags;"
+    return ex(sql, select_all_tags_and_count.__name__, fetchall=True)
 
 
 def select_notetags(note_id):
-    if check_table_exists(T_PREP + note_id):
+    if check_table_exists(N_PREP + note_id):
         sql = f"SELECT tag_id FROM {N_PREP + note_id};"
         return ex(sql, select_notetags.__name__, fetchall=True)
     else:

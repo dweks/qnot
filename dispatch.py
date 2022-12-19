@@ -1,12 +1,13 @@
 from cmds import *
 
 admin_dispatch = {
-    'a': exec_quick,
-    'add': exec_quick,
+    'a': exec_add,
+    'add': exec_add,
     'h': exec_help,
     'help': exec_help,
     'g': exec_get,
     'get': exec_get,
+    'f': exec_edit,
     'full': exec_edit,
     'ls': exec_list,
     'list': exec_list,
@@ -29,13 +30,18 @@ admin_dispatch = {
 mod_dispatch = {
     'e': exec_edit,
     'edit': exec_edit,
-    'r': exec_remove,
-    'remove': exec_remove,
+    'd': exec_delete,
+    'delete': exec_delete,
+    'ex': exec_export,
+    'export': exec_export,
 }
 
-standard_dispatch = {
-    'quick': exec_quick,
+std_dispatch = {
+    'add': exec_add,
+    'f': exec_edit,
     'full': exec_edit,
     'l': exec_last,
     'last': exec_last,
+    'i': exec_import,
+    'import': exec_import,
 }
