@@ -13,5 +13,5 @@ def exec_last(args=None):
         num = 1
     result = select_last_note(num)
     if not result or len(result) == 0:
-        raise MatchNotFound(f"last {num} created")
-    return Listing(f"Last {num} created", add_tags_to_note(result))
+        raise MatchNotFound(f"last {num} modified")
+    return Listing(f"Last {num} modified", add_tags_to_note(result))

@@ -14,7 +14,7 @@ class Note:
         self.tags = tags
 
     def print_trunc(self):
-        trim = ut.MAX_WIDTH - 8
+        trim = ut.MAX_WIDTH - 11
         no_space = False
         mid = ut.gray('   │ ')
         end = ut.gray('   └ ')
@@ -24,18 +24,19 @@ class Note:
 
         # title
         if self.title != "None" and self.title is not None:
-            if len(self.title) > trim:
-                print(ut.bld(self.oneline(self.title)[0:trim]), end=ut.gray(' ...\n'))
+            if len(self.oneline(self.title)) > trim:
+                print(ut.bld(self.oneline(self.title)[0:trim]), end=ut.gray('...\n'))
                 no_space = True
             else:
                 print(ut.bld(self.title), end=': ')
+                trim -= 2
             trim -= len(self.title)
         # note
         if not no_space:
-            if len(self.body) > trim:
-                print(ut.bld(self.body.replace('\n', ' ')[0:trim]), end=ut.gray(' ...\n'))
+            if len(self.oneline(self.body)) > trim:
+                print(ut.bld(self.oneline(self.body)[0:trim]), end=ut.gray('...\n'))
             else:
-                print(ut.bld(self.body.replace('\n', ' ')))
+                print(ut.bld(self.oneline(self.body[0:trim])))
         # date / tags
         print(mid + date)
         if self.tags is not None:
@@ -59,12 +60,14 @@ class Note:
         if self.title is not None and self.title != "None":
             print(ut.und(textwrap.fill(self.title, width=ut.MAX_WIDTH, replace_whitespace=False)))
         if len(self.body) > ut.MAX_WIDTH:
-            print(ut.bld(textwrap.fill(self.body, width=ut.MAX_WIDTH, replace_whitespace=False)))
+            print(ut.bld(self.body))
+            # print(ut.bld(textwrap.fill(self.body, width=ut.MAX_WIDTH, replace_whitespace=False)))
         else:
             print(ut.bld(self.body))
 
         # date/tags
-        print(self.date_c)
+        print("Created: " + self.date_c)
+        print("Modified: " + self.date_m)
         if self.tags:
             print(ut.gray(ut.itl(', '.join(self.tags))))
         else:
