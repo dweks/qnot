@@ -1,4 +1,6 @@
-import dispatch as dsp
+from dispatch.adm import admin_dispatch
+from dispatch.mod import mod_dispatch
+from dispatch.std import std_dispatch
 
 
 class Carg:
@@ -16,13 +18,13 @@ class Carg:
         return not self.is_none() and self.c[0].isdigit()
 
     def is_adm(self):
-        return self.c in dsp.admin_dispatch.keys()
+        return self.c in admin_dispatch.keys()
 
     def is_mod(self):
-        return self.c in dsp.mod_dispatch.keys()
+        return self.c in mod_dispatch.keys()
 
     def is_std(self):
-        return self.c in dsp.std_dispatch.keys()
+        return self.c in std_dispatch.keys()
 
     def num_args(self):
         return len(self.a) if self.a else 0
@@ -42,3 +44,5 @@ class Carg:
 
     def __str__(self):
         return self.cmd_str() + ' ' + self.arg_str()
+
+

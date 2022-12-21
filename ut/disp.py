@@ -1,85 +1,85 @@
 from colorama import Fore
-MAX_WIDTH = 80
-# Output text formatting
+
+MAX_WIDTH: int = 80
 
 
 class Fmt:
-    BLD = '\033[1m'
-    ITL = '\033[3m'
-    UND = '\033[4m'
-    END = '\033[0m'
+    BLD: str = '\033[1m'
+    ITL: str = '\033[3m'
+    UND: str = '\033[4m'
+    END: str = '\033[0m'
 
 
-def bld(string):
-    return Fmt.BLD + string + Fmt.END
+def bld(text: str) -> str:
+    return Fmt.BLD + text + Fmt.END
 
 
-def itl(string):
-    return Fmt.ITL + string + Fmt.END
+def itl(text: str) -> str:
+    return Fmt.ITL + text + Fmt.END
 
 
-def und(string):
-    return Fmt.UND + string + Fmt.END
+def und(text: str) -> str:
+    return Fmt.UND + text + Fmt.END
 
 
-def msg(string):
-    return bld(Fore.CYAN + string)
+def msg(text: str) -> str:
+    return bld(Fore.CYAN + text)
 
 
-def imp(string):
-    return Fore.RED + bld(string)
+def imp(text: str) -> str:
+    return Fore.RED + bld(text)
 
 
-def warn(string):
-    return itl(Fore.YELLOW + string)
+def warn(text: str) -> str:
+    return itl(Fore.YELLOW + text)
 
 
-def suc(string):
-    return Fore.LIGHTGREEN_EX + string + Fmt.END
+def suc(text: str) -> str:
+    return Fore.LIGHTGREEN_EX + text + Fmt.END
 
 
-# Formats passed string as a header
-def heading(string):
-    return grn_b(string)
+# Formats passed text as a header
+def heading(text: str) -> str:
+    return grn_b(text)
 
 
-# Formats passed string as code
-def code(string):
-    return bld(string)
+# Formats passed text as code
+def code(text: str) -> str:
+    return bld(text)
 
 
-def line(char=None, length=None):
+def line(char=None, length=None) -> str:
     if not char:
-        char = '-'
+        char: str = '-'
     if not length:
-        length = MAX_WIDTH
+        length: int = MAX_WIDTH
 
     return Fore.LIGHTBLACK_EX + char * length + Fore.RESET
 
 
-def lred_b(string):
-    return Fore.LIGHTRED_EX + bld(string) + Fore.RESET
+def lred_b(text: str) -> str:
+    return Fore.LIGHTRED_EX + bld(text) + Fore.RESET
 
 
-def grn_b(string):
-    return Fore.GREEN + bld(string) + Fore.RESET
+def grn_b(text: str) -> str:
+    return Fore.GREEN + bld(text) + Fore.RESET
 
 
-def yel_b(string):
-    return Fore.YELLOW + bld(string) + Fore.RESET
+def yel_b(text: str) -> str:
+    return Fore.YELLOW + bld(text) + Fore.RESET
 
 
-def lcyan(string):
-    return Fore.LIGHTCYAN_EX + string + Fore.RESET
+def lcyan(text: str) -> str:
+    return Fore.LIGHTCYAN_EX + text + Fore.RESET
 
 
-def lyel(string):
-    return Fore.LIGHTYELLOW_EX + string + Fore.RESET
+def lyel(text: str) -> str:
+    return Fore.LIGHTYELLOW_EX + text + Fore.RESET
 
 
-def gray(string):
-    return Fore.LIGHTBLACK_EX + string + Fore.RESET
+def gray(text: str) -> str:
+    return Fore.LIGHTBLACK_EX + text + Fore.RESET
 
 
-def debug(string):
-    print(Fore.LIGHTMAGENTA_EX + str(string) + Fore.RESET)
+def debug(text: str) -> None:
+    print(Fore.LIGHTMAGENTA_EX + str(text) + Fore.RESET)

@@ -1,0 +1,30 @@
+import cmd_accessories.help as hlp
+help_dispatch = {
+    'basic': hlp.BASIC,
+    'v': hlp.VIEW,
+    'view': hlp.VIEW,
+    'e': hlp.EDIT,
+    'edit': hlp.EDIT,
+    'ex': hlp.FULL,
+    'r': hlp.REMOVE,
+    'remove': hlp.REMOVE,
+    'g': hlp.FIND,
+    'get': hlp.FIND,
+    'a': hlp.ADD,
+    'add': hlp.ADD,
+    'ls': hlp.LIST,
+    'list': hlp.LIST,
+
+    'n': hlp.NEXT,
+    'next': hlp.NEXT,
+    'p': hlp.PREV,
+    'prev': hlp.PREV,
+    'l': hlp.LAST,
+    'last': hlp.LAST,
+
+    'tag': hlp.TAG,
+    'title': hlp.TITLE,
+    'today': hlp.TODAY,
+    'week': hlp.WEEK,
+    'day': hlp.DAY,
+}

@@ -1,6 +1,6 @@
 import sqlite3 as SQL
 from exceptions import MissingArguments, MatchNotFound
-from ut import debug
+from ut.disp import debug
 
 # Paths and filenames
 DB_PATH = ".notes.db"

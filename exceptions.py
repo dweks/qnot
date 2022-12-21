@@ -1,4 +1,4 @@
-from ut import warn
+from ut.disp import warn, bld
 
 
 class InvalidInput(Exception):
@@ -7,7 +7,7 @@ class InvalidInput(Exception):
         self.inp = inp
 
     def __str__(self):
-        return warn(f"Input for '{self.place}' not recognized: {self.inp}")
+        return warn(f"Input for '{self.place}' not recognized: {bld(self.inp)}")
 
 
 class ListingItemNotExist(Exception):

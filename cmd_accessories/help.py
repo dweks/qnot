@@ -1,18 +1,4 @@
-from exceptions import InvalidInput
-from ut import bld, itl, und, heading, code
-
-
-# Entry-point for cmds called from dispatch table in Admin or Standard
-# Help uses a dispatch table for the help 'topics'. The cmds's parameterless
-# behavior is to TODO display a list of available help topics
-def exec_help(args):
-    # todo set default help message for empty args
-    arg = None if not args else args[0]
-    if arg not in help_dispatch.keys():
-        raise InvalidInput("help", arg)
-    else:
-        print(help_dispatch[arg])
-    return "suspend"
+from ut.disp import heading, itl, und, code, bld
 
 
 VIEW = "h_view"
@@ -65,46 +51,18 @@ Extended notes preserve whitespace and allow special characters.
 
 {heading("COMMANDS")}
 
-{code("  qnot <cmds> <args>")}
+{code("  qnot <cmd_accessories> <args>")}
 
 Commands can be expanded or not ({code("-full")} or {code("-f")}).
 Some commands take arguments; if none supplied, {und("interface mode")} starts.
 
 To list all available commands: {bld("  qnot -h list")}
-To get details on a specific cmds: {bld("  qnot -h " + itl("<cmds>"))}
+To get details on a specific cmd_accessories: {bld("  qnot -h " + itl("<cmd_accessories>"))}
 
 {heading("INTERFACE MODE")}
 
 If needed, qnot will execute a program with a menu with prompt.
-This occurs if no arguments are given for a cmds that needs them.
+This occurs if no arguments are given for a cmd_accessories that needs them.
 When interface mode starts, exit without changing by entering {bld("q")} anytime.
 """
 
-help_dispatch = {
-    'v': VIEW,
-    'view': VIEW,
-    'e': EDIT,
-    'edit': EDIT,
-    'full': FULL,
-    'r': REMOVE,
-    'remove': REMOVE,
-    'g': FIND,
-    'get': FIND,
-    'a': ADD,
-    'add': ADD,
-    'ls': LIST,
-    'list': LIST,
-
-    'n': NEXT,
-    'next': NEXT,
-    'p': PREV,
-    'prev': PREV,
-    'l': LAST,
-    'last': LAST,
-
-    'tag': TAG,
-    'title': TITLE,
-    'today': TODAY,
-    'week': WEEK,
-    'day': DAY,
-}
