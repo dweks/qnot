@@ -1,0 +1,9 @@
+react :: +js library for ui
+things are done through events not declarative
+component based, breaking code into small components - encapsulation
+can manage state inside application
+
+// useref 
+refs persist between renders of component BUT doesn't cause rerender when updated
+useref returns object - has single property 'current' - current is what is persistent
+example of use: count number of times comp renders - can't do with state because when state updates it will rerender causing infintite loop

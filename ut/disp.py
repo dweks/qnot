@@ -81,5 +81,3 @@ def gray(text: str) -> str:
     return Fore.LIGHTBLACK_EX + text + Fore.RESET
 
 
-def debug(text: str) -> None:
-    print(Fore.LIGHTMAGENTA_EX + str(text) + Fore.RESET)

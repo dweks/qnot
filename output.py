@@ -1,7 +1,7 @@
 import math
 from ut.disp import msg, gray, lyel, bld
 from exceptions import ListingItemNotExist, OutsidePageBounds, NoPagesInListing
-from note import Note
+from notetags import Note
 ITEMS_PER_PAGE = 5
 
 
@@ -38,7 +38,7 @@ class Listing(Output):
             item_id: int = self.pages[self.curr_pg].index(item) + 1 + (self.curr_pg - 1) * ITEMS_PER_PAGE
             spacer: str = '  ┬ ' if item_id < 10 else ' ┬ ' if item_id < 100 else '┬ '
             print(lyel(str(item_id)), end=gray(spacer))
-            item.print_trunc()
+            item.print_short()
         print("PAGE " + bld(f"{self.curr_pg}") + gray(f" / {self.page_count}"))
 
     def next_page(self) -> bool:

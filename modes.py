@@ -1,10 +1,11 @@
-from note import Note
+from notetags import Note
 from dispatch.adm import admin_dispatch
 from dispatch.mod import mod_dispatch
 from dispatch.std import std_dispatch
-from ut.disp import msg, lred_b, lyel, warn, debug, suc, gray
-from listing import Output, Listing, Message
-from exceptions import InvalidInput, SelectBeforeModify, ListBeforeSelect
+from ut.disp import msg, lred_b, lyel, warn, suc, gray
+from ut.debug import debug
+from output import Output, Listing, Message
+from exceptions import QnotException, InvalidInput, SelectBeforeModify, ListBeforeSelect
 from carg import Carg
 
 DEF_LAST = 5
@@ -27,8 +28,12 @@ class Admin:
         self.modify: bool = False
         self.suspend: bool = False
         self.listing: Listing or None = None
-        self.listing_carg: Carg or None = None
-        self.out: Output or None = self.execute(carg)
+        self.listing_carg: Carg = Carg(None, None)
+        try:
+            self.out: Output or None = self.execute(carg)
+        except QnotException as e:
+            print(e)
+            self.out = None
         if type(self.out) is Listing:
             self.listing = self.out
             self.listing_carg = carg
@@ -90,7 +95,7 @@ class Admin:
             self.selection = self.listing.retrieve(int(carg.c))
             # todo this heading needs to be dynamic when range select is implemented
             print(lyel(f"\nViewing {int(carg.c)}"))
-            self.selection.print_full()
+            self.selection.print_long()
             return Message("selection", "admin execute")
         else:
             raise InvalidInput("admin prompt", carg.c + (' ' + ' '.join(carg.a) if carg.a is not None else ''))

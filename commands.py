@@ -1,38 +1,38 @@
 import os
 import subprocess as sp
-from note import Note
-from listing import Output, Message, Listing
+from notetags import Note
+from output import Output, Message, Listing
 from db_access import select_notes_tagged_with, select_last_note, select_notetags, delete_note, select_like
 from exceptions import SelectBeforeModify, NotListable, MissingArguments, MissingSearchQuery, MatchNotFound, \
-    InvalidInput
+    InvalidInput, FileNotExist
 from ut.disp import msg, imp
 from ut.date import date_norm, date_enc
-from ut.nt import save_note_and_tags, add_tags_to_note
+from ut.note import save_note_and_tags, add_tags_to_note
 from ut.file import file_to_str, write_note_to_file, user_editor
-from ut.prs import parse_note
+from ut.prs import parse_note, listtuple_to_list
 
 
 # If an Admin object is created without parameters, this is the default
 # 'dispatched' cmd_accessories.
-def exec_default(args: None = None) -> Output:
-    return exec_last(5)
+def cmd_default(args: None = None) -> Output:
+    return cmd_last(5)
 
 
 # Entry-point for cmd_accessories called from dispatch in Standard
 #
 # Quick is the implicit cmd_accessories called when a user creates a note from
 # the cmd_accessories-line. It is not callable from any other context.
-def exec_add(args: list) -> Output:
+def cmd_add(args: list, do_parse: bool) -> Output:
     if not args:
         raise MissingArguments("add")
 
     note_id: str = date_enc()
     date_c: str = date_norm()
     date_m: str = date_c
-    note: Note = parse_note(' '.join(args), note_id, date_c, date_m)
+    note: Note = parse_note(' '.join(args), note_id, date_c, date_m, pure=True)
 
     save_note_and_tags(note)
-    return Message("added", exec_add.__name__)
+    return Message("added", cmd_add.__name__)
 
 
 # Entry-point for cmd_accessories called from dispatch table in Standard
@@ -40,9 +40,9 @@ def exec_add(args: list) -> Output:
 # Gets user editor then uses editor to create a temporary file for user to edit.
 # If file is saved, its contents are extracted as a string and the temp file is removed.
 # The string is parsed as a note and inserted in the database
-def exec_edit(note: Note or None = None) -> Output:
+def cmd_edit(note: Note or None = None) -> Output:
     TEMP_PATH: str = r"./.temp/temp_note_" + date_enc()
-    source: str = exec_edit.__name__
+    source: str = cmd_edit.__name__
     if not note:
         note_id = date_enc()
         date_c = date_norm()
@@ -54,7 +54,7 @@ def exec_edit(note: Note or None = None) -> Output:
         write_note_to_file(note, TEMP_PATH)
 
     editor: str or None = user_editor()
-    if editor:
+    if editor is not None:
         run_editor: sp.CompletedProcess = sp.run([editor, TEMP_PATH])
         # Cases when opened editor is interrupted before exiting.
         if run_editor.returncode != 0:
@@ -69,7 +69,7 @@ def exec_edit(note: Note or None = None) -> Output:
     else:
         raise FileNotFoundError(f"Temporary note file not created, qnot not saved ({source})")
 
-    if note is not None:
+    if note is None:
         return Message("added", source)
     return Message("revised", source)
 
@@ -80,11 +80,11 @@ def exec_edit(note: Note or None = None) -> Output:
 # which alter the generation of SQL queries. If 'find' is not provided with
 # a filter or section and only a search string, the default searched location
 # is TODO
-def exec_get(args: list or None = None) -> Output:
+def cmd_get(args: list or None = None) -> Output:
     # filters: set = {'today', 'week', 'day', }
 
-    query: list = []
-    if args is None:
+    query: list = args
+    if args is None or len(args) == 0:
         query = ["notag"]
     result: list = select_notes_tagged_with(query)
 
@@ -92,33 +92,43 @@ def exec_get(args: list or None = None) -> Output:
         raise MatchNotFound(' '.join(query))
 
     # TODO: change 'matching tag' to be dynamic
-    return Listing(f"Matching tag: {' '.join(query)}", add_tags_to_note(result), exec_get.__name__)
+    return Listing(f"Matching tag: {' '.join(query)}", add_tags_to_note(result), cmd_get.__name__)
 
 
-def exec_help(args: list or None = None) -> Output:
+def cmd_help(args: list or None = None) -> Output:
     from dispatch.help import help_dispatch
     arg: str = "basic" if args is None else args[0]
     if arg not in help_dispatch.keys():
         raise InvalidInput("help", arg)
     else:
         print(help_dispatch[arg])
-    return Message("suspend", exec_help.__name__)
+    return Message("suspend", cmd_help.__name__)
 
 
 # todo: include option to parse for tags with explanation
-def exec_import(path: list or None) -> Output:
+def cmd_import(path: list or None) -> Output:
     if path is None or len(path) == 0:
         raise MissingArguments("import")
+    for p in path:
+        if not os.path.exists(p):
+            raise FileNotExist(p)
+    print(msg("Importing to qnot:"))
+    for p in path:
+        print(p)
+    print(msg("Do you want to parse these files for qnot syntax?"))
+    print(msg("This will search for a title and tags and may remove certain characters."))
+    print(imp("Do not do this unless these files were created specifically for qnot!"))
+    do_parse: bool = True if input(imp("Confirm parse Y/n > ")) == 'Y' else False
     for p in path:
         new_note: str = file_to_str(p)
         print(new_note)
         response: str = input(imp("Confirm add Y/n > "))
         if response == 'Y':
-            exec_add([file_to_str(p)])
-    return Message("imported", exec_import.__name__)
+            cmd_add([file_to_str(p)], do_parse)
+    return Message("imported", cmd_import.__name__)
 
 
-def exec_export(note: Note):
+def cmd_export(note: Note):
     EX_PATH = "exports/"
     if not os.path.exists(EX_PATH):
         os.mkdir(EX_PATH)
@@ -129,11 +139,11 @@ def exec_export(note: Note):
     response: str = input(imp("Confirm export Y/n > "))
     if response == 'Y':
         write_note_to_file(note, full_path)
-        return Message("exported", exec_export.__name__)
-    return Message("cancel", exec_export.__name__)
+        return Message("exported", cmd_export.__name__)
+    return Message("cancel", cmd_export.__name__)
 
 
-def exec_last(args: list or None = None) -> Output:
+def cmd_last(args: list or None = None) -> Output:
     if args is not None:
         if not args[0].isdigit() or int(args[0]) == 0:
             raise InvalidInput("last", args[0])
@@ -143,42 +153,42 @@ def exec_last(args: list or None = None) -> Output:
     result: list or None = select_last_note(selection)
     if result is None or len(result) == 0:
         raise MatchNotFound(f"last {selection} modified")
-    return Listing(f"Last {selection} modified", add_tags_to_note(result), exec_last.__name__)
+    return Listing(f"Last {selection} modified", add_tags_to_note(result), cmd_last.__name__)
 
 
 # todo make ls <num> change how many notes shown per page
-def exec_list(args: list or None = None) -> Output:
+def cmd_list(args: list or None = None) -> Output:
     from cmd_accessories.list import dispatch
     if args is None:
-        return Message("show", exec_list.__name__)
+        return Message("show", cmd_list.__name__)
     if args[0] not in dispatch.keys():
         raise NotListable(args[0])
     dispatch[args[0]]()
-    return Message("suspend", exec_list.__name__)
+    return Message("suspend", cmd_list.__name__)
 
 
 # Entry-point for cmd_accessories called from dispatch table in Admin
-def exec_delete(note: Note or None) -> Output:
+def cmd_delete(note: Note or None) -> Output:
     if note is None:
-        raise SelectBeforeModify("remove.")
+        raise SelectBeforeModify("delete.")
     tags: list = []
     print(imp('\nPERMANENTLY DELETING NOTE:'))
-    note.print_full()
+    note.print_long()
     response: str = input(imp("Confirm delete Y/n > "))
     if response == 'Y':
-        if note.tags is not None and len(note.tags) > 0:
+        if note.tags is not None and not note.tags.empty():
             tags = select_notetags(note.id)
             if tags:
-                tags = [tag for tup in tags for tag in tup]
+                tags = listtuple_to_list(tags)
         delete_note(note.id, tags)
-        return Message("deleted", exec_delete.__name__)
-    return Message("cancel", exec_delete.__name__)
+        return Message("deleted", cmd_delete.__name__)
+    return Message("cancel", cmd_delete.__name__)
 
 
-def exec_search(query: list or None) -> Output:
+def cmd_search(query: list or None) -> Output:
     if query is None:
         raise MissingSearchQuery("search")
     result: list = select_like(query)
     if result is None or len(result) == 0:
         raise MatchNotFound(f"{' '.join(query)}")
-    return Listing(f"Searching for ` {' '.join(query)} `", add_tags_to_note(result), exec_search.__name__)
+    return Listing(f"Searching for ` {' '.join(query)} `", add_tags_to_note(result), cmd_search.__name__)

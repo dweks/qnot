@@ -20,24 +20,20 @@ DEF_LAST = "3"
 # If a user provides NO arguments from the cmd_accessories-line (only `qnot`) admin
 # mode is instantiated.
 def main():
-    try:
-        db_init()
-        if len(sys.argv) == 1:
-            Admin(Carg("last", [DEF_LAST]))
+    db_init()
+    if len(sys.argv) == 1:
+        Admin(Carg("last", [DEF_LAST]))
 
-        elif re.findall(r"^-[a-zA-Z]+$", sys.argv[1]):
-            carg = Carg(sys.argv[1].lstrip('-').lower(), sys.argv[2:])
-            if carg.is_adm():
-                Admin(carg)
-            elif carg.is_std():
-                Standard(carg)
-            else:
-                raise NoSuchCommand(carg.c)
+    elif re.findall(r"^-[a-zA-Z]+$", sys.argv[1]):
+        carg: Carg = Carg(sys.argv[1].lstrip('-').lower(), sys.argv[2:])
+        if carg.is_adm():
+            Admin(carg)
+        elif carg.is_std():
+            Standard(carg)
         else:
-            args = sys.argv[1:]
-            Standard(Carg('add', args))
-    except Exception as e:
-        print(e)
+            raise NoSuchCommand(carg.c)
+    else:
+        Standard(Carg('add', sys.argv[1:]))
 
 
 if __name__ == "__main__":

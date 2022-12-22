@@ -1,10 +1,10 @@
-from commands import exec_edit, exec_delete, exec_export
+from commands import cmd_edit, cmd_delete, cmd_export
 
 mod_dispatch = {
-    'e': exec_edit,
-    'edit': exec_edit,
-    'd': exec_delete,
-    'delete': exec_delete,
-    'ex': exec_export,
-    'export': exec_export,
+    'e': cmd_edit,
+    'edit': cmd_edit,
+    'd': cmd_delete,
+    'delete': cmd_delete,
+    'ex': cmd_export,
+    'export': cmd_export,
 }

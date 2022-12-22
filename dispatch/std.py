@@ -1,11 +1,9 @@
-from commands import exec_add, exec_edit, exec_last, exec_import
+from commands import cmd_add, cmd_edit, cmd_last, cmd_import
 std_dispatch = {
-    'add': exec_add,
-    'f': exec_edit,
-    'full': exec_edit,
-    'l': exec_last,
-    'last': exec_last,
-    'i': exec_import,
-    'import': exec_import,
+    'add': cmd_add,
+    'f': cmd_edit,
+    'full': cmd_edit,
+    'l': cmd_last,
+    'last': cmd_last,
 }
 
