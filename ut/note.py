@@ -1,6 +1,6 @@
 import db_access as db
-from notetags import Note, Tags
-from ut.prs import listtuple_to_list
+from notetags import Note, Tags, NOTAG
+from ut.prs import detuple
 # from ut.debug import debug
 
 
@@ -15,7 +15,7 @@ def save_note_and_tags(note: Note):
             db.create_notetags_table(note.id)
             db.insert_tags_to_notetags(note.id, tag)
     else:
-        db.insert_note_to_tag(note.id, "notag")
+        db.insert_note_to_tag(note.id, NOTAG)
 
 
 def add_tags_to_note(notes: list) -> list:
@@ -27,7 +27,7 @@ def add_tags_to_note(notes: list) -> list:
         new_tags: Tags = Tags([])
         raw_tags: list = db.select_notetags(note[0])
         if raw_tags is not None:
-            new_tags += listtuple_to_list(raw_tags)
+            new_tags += detuple(raw_tags)
         note += (new_tags,)
         tagged_notes.append(note)
     return tagged_notes

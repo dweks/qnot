@@ -23,7 +23,7 @@ def und(text: str) -> str:
 
 
 def msg(text: str) -> str:
-    return bld(Fore.CYAN + text)
+    return lblu_b(text)
 
 
 def imp(text: str) -> str:
@@ -40,7 +40,7 @@ def suc(text: str) -> str:
 
 # Formats passed text as a header
 def heading(text: str) -> str:
-    return grn_b(text)
+    return yel_b(text)
 
 
 # Formats passed text as code
@@ -61,16 +61,24 @@ def lred_b(text: str) -> str:
     return Fore.LIGHTRED_EX + bld(text) + Fore.RESET
 
 
-def grn_b(text: str) -> str:
-    return Fore.GREEN + bld(text) + Fore.RESET
+def lgrn_b(text: str) -> str:
+    return Fore.LIGHTGREEN_EX + bld(text) + Fore.RESET
 
 
 def yel_b(text: str) -> str:
     return Fore.YELLOW + bld(text) + Fore.RESET
 
 
-def lcyan(text: str) -> str:
-    return Fore.LIGHTCYAN_EX + text + Fore.RESET
+def lcyan_b(text: str) -> str:
+    return Fore.LIGHTCYAN_EX + bld(text) + Fore.RESET
+
+
+def cyan(text: str) -> str:
+    return Fore.CYAN + text + Fore.RESET
+
+
+def lblu_b(text: str) -> str:
+    return Fore.LIGHTBLUE_EX + bld(text) + Fore.RESET
 
 
 def lyel(text: str) -> str:
@@ -79,5 +87,3 @@ def lyel(text: str) -> str:
 
 def gray(text: str) -> str:
     return Fore.LIGHTBLACK_EX + text + Fore.RESET
-
-

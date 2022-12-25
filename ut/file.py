@@ -28,7 +28,7 @@ def user_editor() -> os.environ or None:
 
 
 # Writes string to a file
-def write_note_to_file(note, path) -> None:
+def note_to_file(note, path) -> None:
     title_maybe: str = ''
     if note.title is not None and note.title != "None":
         title_maybe = note.title + " :: "

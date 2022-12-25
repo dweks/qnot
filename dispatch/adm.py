@@ -1,4 +1,5 @@
 import commands as cmd
+from output import Message
 admin_dispatch = {
     'a': cmd.cmd_add,
     'add': cmd.cmd_add,
@@ -17,14 +18,13 @@ admin_dispatch = {
     's': cmd.cmd_search,
     'search': cmd.cmd_search,
 
-    'n': lambda x: "next",
-    'next': lambda x: "next",
-    'p': lambda x: "prev",
-    'prev': lambda x: "prev",
-    'q': lambda x: "quit",
-    'quit': lambda x: "quit",
+    'n': lambda x: Message("next"),
+    'next': lambda x: Message("next"),
+    'p': lambda x: Message("prev"),
+    'prev': lambda x: Message("prev"),
+    'q': lambda x: Message("quit"),
+    'quit': lambda x: Message("quit"),
     'today': "_",
     'week': "_",
     'day': "_",
 }
-

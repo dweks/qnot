@@ -6,7 +6,7 @@ from modes import Admin, Standard
 from carg import Carg
 from exceptions import NoSuchCommand
 
-DEF_LAST = "3"
+DEF_LAST = "10"
 
 
 # The router determines the correct context for execution of commands from

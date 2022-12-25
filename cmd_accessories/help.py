@@ -6,7 +6,7 @@ EDIT = "h_edit"
 FULL = "h_full"
 TAG = "h_tag"
 TITLE = "h_title"
-REMOVE = "h_remove"
+DELETE = "h_remove"
 FIND = f"""{heading(f"How to use the 'get' command:")}
 {itl("Purpose")}: Retrieves notes by tag
 {itl("Context")}: Linux and qnot admin mode

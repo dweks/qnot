@@ -1,6 +1,6 @@
 import sqlite3 as SQL
 from exceptions import MissingArguments, MatchNotFound
-from notetags import Note
+from notetags import Note, NOTAG
 
 # Paths and filenames
 DB_PATH: str = ".notes.db"
@@ -40,6 +40,7 @@ def ex(
 
 
 def db_init():
+    # todo must make sure db is created in correct place regardless of where qnot is called from
     sql: str = "PRAGMA foreign_keys = ON"
     ex(sql, db_init.__name__)
     create_alltags_table()
@@ -48,9 +49,9 @@ def db_init():
 
 
 def insert_default_tags():
-    sql: str = "INSERT OR IGNORE INTO Tags (tag_id) VALUES ( 'notag' );"
-    ex(sql, insert_default_tags.__name__)
-    create_tag_table("notag")
+    sql: str = "INSERT OR IGNORE INTO Tags (tag_id) VALUES ( ? );"
+    ex(sql, insert_default_tags.__name__, params=[NOTAG])
+    create_tag_table(NOTAG)
 
 
 def create_notes_table():

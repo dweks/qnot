@@ -2,7 +2,7 @@ import datetime as dt
 from ut.disp import MAX_WIDTH, gray, und, bld, line
 from ut.date import date_obj
 
-NOTAG: str = "notag"
+NOTAG: str = "untagged"
 
 
 class Tags:
@@ -37,6 +37,23 @@ class Note:
         self.date_m: str = date_m
         self.tags: Tags = tags
 
+    def print_tiny(self):
+        trim: int = MAX_WIDTH - 11
+        no_space: bool = False
+        if self.title != "None" and self.title is not None:
+            if len(self.title) + 2 > trim:
+                print(und(bld(self.oneline(self.title)[0:trim])), end=gray('...\n'))
+                no_space = True
+            else:
+                print(und(bld(self.title)), end=': ')
+                trim -= 2
+            trim -= len(self.title)
+        if not no_space:
+            if len(self.oneline(self.body)) > trim:
+                print(self.oneline(self.body)[0:trim], end=gray('...\n'))
+            else:
+                print(self.oneline(self.body[0:trim]))
+
     def print_short(self):
         trim: int = MAX_WIDTH - 11
         no_space: bool = False
@@ -64,7 +81,7 @@ class Note:
         # todo: when showing last modified, show date as mod date
         # date / tags
         print(mid + date)
-        print(gray(end + self.tags.str()))
+        print(end + gray(self.tags.str()))
         print()
 
     # todo: print time as just hour:mins
@@ -101,6 +118,9 @@ class Note:
     @staticmethod
     def oneline(text) -> str:
         return text.replace('\n', ' ')
+
+    def select(self) -> tuple:
+        return self.id, self.title, self.body, self.date_c, self.date_m, self.tags
 
     def __str__(self):
         return f"{self.id}, {self.title}, {self.body}, {self.date_c}, {self.date_m}"

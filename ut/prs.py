@@ -32,8 +32,6 @@ def parse_note(raw_note: str, note_id: str, date_c: str, date_m: str, pure=False
         return Note(note_id, None, raw_note, date_c, date_m, Tags())
 
 
-
-
 # Finds all occurences of substrings with the 'tag' syntax
 # anywhere in the given string and returns a list of them
 # without the delimiter.
@@ -55,13 +53,17 @@ def parse_tags(raw_note: str) -> list:
 
 
 def remove_tag_notation(raw_note: str) -> str:
-    # ldebug("raw before", raw_note)
     raw_note = re.sub(PAT_GROUP_TAG, '', raw_note)
-    # ldebug("raw after", raw_note)
-    split: list = raw_note.split(' ')
-    split = [part.lstrip('_') for part in split]
-    return ' '.join(split)
+    return ' '.join([part.lstrip('_') for part in raw_note.split(' ')])
 
 
-def listtuple_to_list(listtuple: list) -> list:
+def detuple(listtuple: list) -> list:
     return [item for tup in listtuple for item in tup]
+
+
+def parse_slice(slc: str) -> slice or None:
+    if slc.count('-') == 1:
+        parts: tuple = slc.partition('-')
+        if parts[0].isdigit() and parts[2].isdigit():
+            return slice(int(parts[0]) - 1, int(parts[2]))
+    return None

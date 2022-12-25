@@ -12,7 +12,7 @@ class InvalidInput(QnotException):
         self.inp = inp
 
     def __str__(self):
-        return warn(f"Input for {self.source} not recognized: {bld(self.inp)}")
+        return warn(f"`{self.inp}` not recognized.")
 
 
 class ListingItemNotExist(QnotException):
@@ -65,7 +65,7 @@ class SelectBeforeModify(QnotException):
         self.err = err
 
     def __str__(self):
-        return warn(f"Select a note to {self.err}")
+        return warn(f"Not in selection mode, first select note to use this command.")
 
 
 class NoSuchCommand(QnotException):
@@ -95,3 +95,11 @@ class FileNotExist(QnotException):
 
     def __str__(self):
         return warn(f"File does not exist: {bld(self.err)}")
+
+
+class InvalidRange(QnotException):
+    def __init__(self, err):
+        self.err = err
+
+    def __str__(self):
+        return warn(f"Invalid selection. Choose between lower bound: 1, upper bound: {self.err}")
