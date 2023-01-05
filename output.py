@@ -1,7 +1,7 @@
 import math
-from ut.disp import msg, gray, lyel, line
-from ut.prs import parse_slice
-from exceptions import OutsidePageBounds, NoPagesInListing, InvalidRange
+from ut.disp import gry, heading, f
+from ut.prs import parse_selection
+from exceptions import OutsidePageBounds, NoPagesInListing, InvalidSelection
 from notetags import Note
 PAGE_MAX = 5
 
@@ -24,7 +24,6 @@ class Message(Output):
         print(self.body)
 
 
-# TODO if select_notes_tagged_with returns None or just a string, must handle it before creating book
 class Listing(Output):
     def __init__(self, title: str or None, items: list, pp: int = PAGE_MAX):
         Output.__init__(self)
@@ -39,36 +38,32 @@ class Listing(Output):
         if self.page_count == 0:
             raise NoPagesInListing()
 
-        print(msg(f"\n{self.title}"))
+        print(heading(self.title))
 
         if long:
             for item in self.items:
                 item.print_long()
         elif tiny:
-            print(line())
             for item in self.items[(self.curr_pg - 1) * self.pp: min(self.curr_pg * self.pp, self.item_count)]:
-                item_id: int = self.items.index(item) + 1
-                spacer: str = '  ─ ' if item_id < 10 else ' ─ ' if item_id < 100 else '─ '
-                print(lyel(str(item_id)), end=gray(spacer))
+                print(gry('∙'), end=' ')
                 item.print_tiny()
-            print(line())
-
+            print()
         else:
             for item in self.items[(self.curr_pg - 1) * self.pp: min(self.curr_pg * self.pp, self.item_count)]:
                 item_id: int = self.items.index(item) + 1
                 spacer: str = '  ┬ ' if item_id < 10 else ' ┬ ' if item_id < 100 else '┬ '
-                print(lyel(str(item_id)), end=gray(spacer))
+                print(f(str(item_id), 'ly'), end=gry(spacer))
                 item.print_short()
-        print(f"{'Notes: '+ msg(str(self.item_count))}", end='')
-        print(gray(' | '), end='')
+        print(f"{'Notes: '+ f(str(self.item_count),'y','b')}", end='')
+        print(gry(' | '), end='')
         print(f"PAGE {self.curr_pg}/{self.page_count}", end='')
         if 1 < self.page_count < 10:
-            print(gray(' | '), end='')
+            print(gry(' | '), end='')
             for i in range(1, self.page_count + 1):
                 if i == self.curr_pg:
-                    print(lyel(str(i)), end='  ')
+                    print(f(str(i), 'lm'), end='  ')
                 else:
-                    print(gray(str(i)), end='  ')
+                    print(gry(str(i)), end='  ')
         print()
 
     def next_page(self) -> bool:
@@ -85,8 +80,24 @@ class Listing(Output):
             self.curr_pg -= 1
             return True
 
-    def retrieve(self, sel: str) -> list:
-        sel_slice: slice = slice(int(sel)-1, int(sel)) if len(sel) == 1 else parse_slice(sel)
-        if sel_slice is None or sel_slice.start < 0 or sel_slice.stop > self.item_count:
-            raise InvalidRange(self.item_count)
-        return [(i.id, i.title, i.body, i.date_c, i.date_m, i.tags) for i in self.items[sel_slice]]
+    def retrieve(self, sel: list) -> list:
+        selection: list = []
+        if len(sel) == 1 and sel[0] == "all":
+            return [n.select() for n in self.items]
+        elif "all" in sel:
+            raise InvalidSelection(' '.join(sel))
+
+        slc, sng = parse_selection(sel)
+        if len(slc) > 0:
+            for s in slc:
+                if s.start < 0 or s.stop > self.item_count:
+                    raise InvalidSelection(' '.join(sel))
+                for n in self.items[s]:
+                    selection.append(n.select())
+        if len(sng) > 0:
+            for s in sng:
+                if s < 0 or s >= self.item_count:
+                    raise InvalidSelection(' '.join(sel))
+                if self.items[s].select() not in selection:
+                    selection.append(self.items[s].select())
+        return list(selection)

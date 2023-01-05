@@ -1,5 +1,7 @@
 import os
 from sys import platform
+from notetags import Note
+from ut.note import deparse_title, deparse_tags
 
 
 # Retrieves content of a file as a string, preserving formatting
@@ -27,11 +29,6 @@ def user_editor() -> os.environ or None:
         return None
 
 
-# Writes string to a file
-def note_to_file(note, path) -> None:
-    title_maybe: str = ''
-    if note.title is not None and note.title != "None":
-        title_maybe = note.title + " :: "
-    with open(path, "w") as notes_file:
-        notes_file.write(title_maybe + note.body)
-
+def note_to_file(note: Note, path: str, mode='w') -> None:
+    with open(path, mode) as notes_file:
+        notes_file.write(deparse_title(note.title) + note.body + deparse_tags(note.tags.tags))

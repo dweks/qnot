@@ -1,5 +1,5 @@
 import datetime as dt
-from ut.disp import MAX_WIDTH, gray, und, bld, line
+from ut.disp import MAX_WIDTH, line, f, gry
 from ut.date import date_obj
 
 NOTAG: str = "untagged"
@@ -11,6 +11,7 @@ class Tags:
         if tags is None or len(tags) == 0:
             self.tags.add(NOTAG)
         else:
+            tags.sort(key=str)
             self.tags = set(tags)
 
     def empty(self) -> bool:
@@ -19,8 +20,8 @@ class Tags:
     def str(self) -> str:
         return ', '.join(self.tags)
 
-    def __iadd__(self, new_tags: list):
-        self.tags.update(new_tags)
+    def __iadd__(self, new_tags: list or str):
+        self.tags.update(new_tags if type(new_tags) == list else [new_tags])
         if len(self.tags) > 1 and NOTAG in self.tags:
             self.tags.remove(NOTAG)
         return self
@@ -42,78 +43,71 @@ class Note:
         no_space: bool = False
         if self.title != "None" and self.title is not None:
             if len(self.title) + 2 > trim:
-                print(und(bld(self.oneline(self.title)[0:trim])), end=gray('...\n'))
+                print(f(self.oneline(self.title)[0:trim], s='bu'), end=gry('...\n',))
                 no_space = True
             else:
-                print(und(bld(self.title)), end=': ')
+                print(f(self.title, s='bu'), end=': ')
                 trim -= 2
             trim -= len(self.title)
         if not no_space:
             if len(self.oneline(self.body)) > trim:
-                print(self.oneline(self.body)[0:trim], end=gray('...\n'))
+                print(self.oneline(self.body)[0:trim], end=gry('...\n'))
             else:
                 print(self.oneline(self.body[0:trim]))
 
     def print_short(self):
         trim: int = MAX_WIDTH - 11
         no_space: bool = False
-        mid: str = gray('   │ ')
-        end: str = gray('   └ ')
+        mid: str = gry('   │ ')
+        end: str = gry('   └ ')
         # print("DIF:", date_dif_today(self.get_date_obj()))
-        date: dt.datetime = self.get_date_obj()
+        date: dt.datetime = self.get_datec_obj()
         date: str = str(date.month) + '/' + str(date.day) + '/' + str(date.year)
 
         # title
         if self.title != "None" and self.title is not None:
             if len(self.title) + 2 > trim:
-                print(und(bld(self.oneline(self.title)[0:trim])), end=gray('...\n'))
+                print(f(self.oneline(self.title)[0:trim], s='bu'), end=gry('...\n'))
                 no_space = True
             else:
-                print(und(bld(self.title)), end=': ')
+                print(f(self.title, s='bu'), end=': ')
                 trim -= 2
             trim -= len(self.title)
         # note
         if not no_space:
             if len(self.oneline(self.body)) > trim:
-                print(bld(self.oneline(self.body)[0:trim]), end=gray('...\n'))
+                print(f(self.oneline(self.body)[0:trim], s='b'), end=gry('...\n'))
             else:
-                print(bld(self.oneline(self.body[0:trim])))
+                print(f(self.oneline(self.body[0:trim]), s='b'))
         # todo: when showing last modified, show date as mod date
         # date / tags
-        print(mid + date)
-        print(end + gray(self.tags.str()))
+        print(mid + f(self.tags.str(), 'lb'))
+        print(end + gry(date))
         print()
 
     # todo: print time as just hour:mins
     def print_long(self):
-        # comp space for printing
-        if self.title is not None and self.title != "None":
-            width: int = max(len(self.title), len(self.body), len(self.date_c))
-        else:
-            width = max(len(self.body), len(self.date_c))
-        width = (MAX_WIDTH if width > MAX_WIDTH else width) + 10
-
-        print(line(length=width))
+        print(line(char='=', length=30))
 
         # title/body
         if self.title is not None and self.title != "None":
-            print(und(self.title))
-        if len(self.body) > MAX_WIDTH:
-            print(bld(self.body))
-        else:
-            print(bld(self.body))
+            print(f(self.title, s='u'))
+        print(f(self.body, s='b'))
 
         # todo: rethink how tags are printed
         # date/tags
         print(line(length=5))
-        print("Created: " + self.date_c)
-        print("Modified: " + self.date_m)
-        print(gray(self.tags.str()))
+        print(f(self.tags.str(), 'lb'))
+        print(gry("Created: " + self.date_c))
+        print(gry("Modified: " + self.date_m))
 
-        print(line(length=width))
+        print(line(char='=', length=30))
 
-    def get_date_obj(self) -> dt.datetime:
+    def get_datec_obj(self) -> dt.datetime:
         return date_obj(self.date_c)
+
+    def get_datem_obj(self) -> dt.datetime:
+        return date_obj(self.date_m)
 
     @staticmethod
     def oneline(text) -> str:

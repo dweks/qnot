@@ -1,15 +1,13 @@
 import cmd_accessories.help as hlp
 help_dispatch = {
     'basic': hlp.BASIC,
-    'v': hlp.VIEW,
-    'view': hlp.VIEW,
     'e': hlp.EDIT,
     'edit': hlp.EDIT,
     'ex': hlp.FULL,
     'del': hlp.DELETE,
     'delete': hlp.DELETE,
-    'g': hlp.FIND,
-    'get': hlp.FIND,
+    'g': hlp.GET,
+    'get': hlp.GET,
     'a': hlp.ADD,
     'add': hlp.ADD,
     'ls': hlp.LIST,

@@ -1,7 +1,7 @@
 from dispatch.adm import admin_dispatch
 from dispatch.mod import mod_dispatch
 from dispatch.std import std_dispatch
-from ut.disp import msg, lred_b, warn, suc, gray, lcyan_b, imp
+from ut.disp import warn, f, gry
 from ut.debug import debug
 from output import Output, Listing, Message
 from exceptions import QnotException, InvalidInput, SelectBeforeModify, ListBeforeSelect
@@ -27,13 +27,13 @@ def mode_select(selection: Listing) -> bool:
     end: bool = False
 
     def prompt() -> Carg:
-        inp: list = input(gray("qnot") + lred_b(">> ")).split()
+        inp: list = input(gry("qnot") + f(">> ", 'lr', 'b')).split()
         return Carg(None if len(inp) == 0 else inp[0], None)
 
     def execute(carg: Carg) -> Output or None:
         if not carg.is_mod():
-            if not carg.is_none():
-                return Message("context", f"{imp('Use mod commands or enter `x` to exit modify mode.')}")
+            if not carg.is_empty():
+                return Message("context", f"{warn('Use mod commands or enter `x` to exit modify mode.')}")
         else:
             return mod_dispatch[carg.c](selection.items)
 
@@ -61,6 +61,9 @@ def mode_select(selection: Listing) -> bool:
         elif output == "deleted":
             output.display()
             done = True
+        elif output == "merged":
+            output.display()
+            done = True
         elif output == "quit":
             end = True
         return False
@@ -71,10 +74,10 @@ def mode_select(selection: Listing) -> bool:
             if show_list:
                 if single:
                     selection.display(long=True)
-                    print(msg(f"(e)dit, (del)ete, (ex)port, or e(x)it"))
+                    print(f("(e)dit, (del)ete, (ex)port, or e(x)it", 'c'))
                 else:
                     selection.display(tiny=True)
-                    print(msg(f"(del)ete, (ex)port, or e(x)it"))
+                    print(f("(del)ete, (m)erge, (ex)port, or e(x)it", 'c'))
             show_list = handle_output(execute(prompt()))
         except QnotException as e:
             print(e)
@@ -85,7 +88,7 @@ class Admin:
     def __init__(self, carg: Carg or None = None):
         self.done: bool = False
         self.view: Listing or None = None
-        self.view_carg: Carg = Carg(None, None)
+        self.view_carg: Carg = Carg()
         try:
             self.output: Output = self.__execute(carg)
             self.show_list: bool = self.__handle_output(carg)
@@ -121,7 +124,7 @@ class Admin:
         done: bool = False
         raw: list = []
         while not done:
-            raw = input(gray("qnot") + lcyan_b("> ")).split()
+            raw = input(gry("qnot") + f("> ", 'c')).split()
             done = False if len(raw) == 0 else True
         inp_len = len(raw)
         return Carg(raw[0] if inp_len >= 1 else None, raw[1:] if inp_len > 1 else None)
@@ -134,9 +137,12 @@ class Admin:
         elif carg.is_sel():
             if not isinstance(self.view, Listing):
                 raise ListBeforeSelect()
-            self.done = mode_select(Listing("Selection", self.view.retrieve(carg.c), pp=10))
+            self.done = mode_select(Listing("Selection", self.view.retrieve(
+                [carg.c]+[i for i in carg.a] if carg.a is not None else [carg.c]),
+                pp=10
+            ))
             return Message("selectend", f"{warn('Leaving modify mode.')}")
-        elif carg.is_none():
+        elif carg.is_empty():
             return Message("hide")
         else:
             raise InvalidInput("admin prompt", carg.c + (' ' + ' '.join(carg.a) if carg.a is not None else ''))

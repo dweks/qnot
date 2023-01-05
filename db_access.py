@@ -193,20 +193,17 @@ def select_notetags(note_id: str) -> list or None:
         return None
 
 
-def select_last_note(num: int):
+def select_last_note(num: int) -> list:
     sql: str = "SELECT * FROM Notes ORDER BY ROWID DESC LIMIT ?;"
     return ex(sql, select_last_note.__name__, params=[num], fetchall=True)
 
 
-def check_table_exists(table_name: str):
+def check_table_exists(table_name: str) -> bool:
     sql: str = f"SELECT name FROM sqlite_master WHERE type='table' AND name=?;"
-    result: list = ex(sql, check_table_exists.__name__, params=[table_name], fetchall=True)
-    if len(result) > 0:
-        return True
-    return False
+    return len(ex(sql, check_table_exists.__name__, params=[table_name], fetchall=True)) > 0
 
 
-def select_like(query: str) -> list:
+def select_like(query: list) -> list:
     query_fmt: str = '%' + ' '.join(query) + '%'
-    sql: str = "SELECT * FROM Notes WHERE Notes.body LIKE ?"
-    return ex(sql, select_like.__name__, params=[query_fmt], fetchall=True)
+    sql: str = "SELECT * FROM Notes WHERE Notes.title LIKE ? OR Notes.body LIKE ?"
+    return ex(sql, select_like.__name__, params=[query_fmt, query_fmt], fetchall=True)

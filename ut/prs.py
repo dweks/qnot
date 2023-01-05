@@ -1,5 +1,6 @@
 import re
 from notetags import Note, Tags
+from exceptions import InvalidSelection
 # from ut.debug import ldebug, debug
 
 TITLE_DELIM: str = '::'
@@ -23,7 +24,7 @@ def parse_note(raw_note: str, note_id: str, date_c: str, date_m: str, pure=False
         if TITLE_DELIM in raw_note:
             parts: tuple = raw_note.partition(TITLE_DELIM)
             title: str or None = parts[0].strip() if parts[0].strip() != '' else None
-            body: str = parts[2].strip()
+            body: str = parts[2]
         else:
             title = None
             body = raw_note
@@ -36,34 +37,49 @@ def parse_note(raw_note: str, note_id: str, date_c: str, date_m: str, pure=False
 # anywhere in the given string and returns a list of them
 # without the delimiter.
 def parse_tags(raw_note: str) -> list:
-    # ldebug("raw", raw_note)
     p_tags: list or None = re.findall(PAT_REG_TAG, raw_note)
-    # ldebug("reg", p_tags)
     p_tags += re.findall(PAT_GROUP_TAG, raw_note)
-    # ldebug("after group", p_tags)
     p_tags = re.findall(PAT_BARE_TAG, ' '.join(p_tags))
     if len(p_tags) == 0:
-        # debug("no tags found")
         return p_tags
     p_tags = [tag.strip(' ') for tag in p_tags]
     p_tags = [tag.strip('\n') for tag in p_tags]
     p_tags = [tag.lstrip('_') for tag in p_tags]
-    # ldebug("FINAL", p_tags)
     return p_tags
 
 
 def remove_tag_notation(raw_note: str) -> str:
     raw_note = re.sub(PAT_GROUP_TAG, '', raw_note)
-    return ' '.join([part.lstrip('_') for part in raw_note.split(' ')])
+    raw_note = ' '.join([part.lstrip('_') for part in raw_note.split(' ')])
+    return '\n'.join([part.strip('_') for part in raw_note.split('\n')])
 
 
 def detuple(listtuple: list) -> list:
     return [item for tup in listtuple for item in tup]
 
 
-def parse_slice(slc: str) -> slice or None:
-    if slc.count('-') == 1:
-        parts: tuple = slc.partition('-')
-        if parts[0].isdigit() and parts[2].isdigit():
-            return slice(int(parts[0]) - 1, int(parts[2]))
-    return None
+def parse_selection(sel: list) -> tuple:
+    maybe_slice: list = [s for s in sel if '-' in s]
+    slices: list = []
+    if len(maybe_slice) > 0:
+        for item in maybe_slice:
+            if item.count('-') == 1:
+                parts: tuple = item.partition('-')
+                if parts[0].isdigit() and parts[2].isdigit():
+                    if int(parts[0]) < int(parts[2]):
+                        slices.append(slice(int(parts[0]) - 1, int(parts[2])))
+                    else:
+                        raise InvalidSelection(item)
+                else:
+                    raise InvalidSelection(item)
+            else:
+                raise InvalidSelection(item)
+
+    maybe_singles: list = [s for s in sel if '-' not in s]
+    singles: list = []
+    if len(maybe_singles) > 0:
+        for s in maybe_singles:
+            if not s.isdigit():
+                raise InvalidSelection(s)
+            singles.append(int(s) - 1)
+    return slices, singles

@@ -15,6 +15,10 @@ def date_norm() -> str:
     return dt.datetime.now().strftime(DATE_HUMAN_TIME)
 
 
+def encode_norm(date: dt.datetime) -> str:
+    return date.strftime(DATE_AS_KEY)
+
+
 # Turn date string into datetime object
 def date_obj(date: str) -> dt:
     return dt.datetime.strptime(date, DATE_HUMAN_TIME)

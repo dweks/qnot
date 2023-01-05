@@ -1,6 +1,7 @@
 import db_access as db
 from notetags import Note, Tags, NOTAG
 from ut.prs import detuple
+from ut.disp import f
 # from ut.debug import debug
 
 
@@ -31,3 +32,15 @@ def add_tags_to_note(notes: list) -> list:
         note += (new_tags,)
         tagged_notes.append(note)
     return tagged_notes
+
+
+def deparse_title(title: str) -> str:
+    return title + " :: " if title is not None and title != "None" else ''
+
+
+def deparse_tags(tags: set) -> str:
+    return '\n__ ' + ' '.join(tags) + ' __'
+
+
+def confirm(text: str) -> bool:
+    return True if input(f(f"Confirm {text} Y/n > ", 'lc')) == 'Y' else False

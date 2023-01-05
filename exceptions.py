@@ -1,4 +1,4 @@
-from ut.disp import warn, bld
+from ut.disp import warn
 
 
 class QnotException(Exception):
@@ -20,7 +20,7 @@ class ListingItemNotExist(QnotException):
         self.err = err
 
     def __str__(self):
-        return warn(f"Number provided does not correspond to an item: {bld(self.err)}")
+        return warn(f"Number provided does not correspond to an item: {self.err}")
 
 
 class OutsidePageBounds(QnotException):
@@ -57,7 +57,7 @@ class MatchNotFound(QnotException):
         self.err = err
 
     def __str__(self):
-        return warn(f"No matches found for: {bld(self.err)}")
+        return warn(f"No matches found for: {self.err}")
 
 
 class SelectBeforeModify(QnotException):
@@ -73,7 +73,7 @@ class NoSuchCommand(QnotException):
         self.err = err
 
     def __str__(self):
-        return warn(f"No such command for qnot: {bld(self.err)}")
+        return warn(f"No such command for qnot: {self.err}")
 
 
 class NotListable(QnotException):
@@ -81,7 +81,7 @@ class NotListable(QnotException):
         self.err = err
 
     def __str__(self):
-        return warn(f"Nothing to list for: {bld(self.err)}")
+        return warn(f"Nothing to list for {self.err}; Enter `list list` to see listable keywords.")
 
 
 class ListBeforeSelect(QnotException):
@@ -94,12 +94,20 @@ class FileNotExist(QnotException):
         self.err = err
 
     def __str__(self):
-        return warn(f"File does not exist: {bld(self.err)}")
+        return warn(f"File does not exist: {self.err}")
 
 
-class InvalidRange(QnotException):
+class EmptyDirectory(QnotException):
     def __init__(self, err):
         self.err = err
 
     def __str__(self):
-        return warn(f"Invalid selection. Choose between lower bound: 1, upper bound: {self.err}")
+        return warn(f"Provided directory has no importable files: {self.err}")
+
+
+class InvalidSelection(QnotException):
+    def __init__(self, err):
+        self.err = err
+
+    def __str__(self):
+        return warn(f"Invalid selection: {self.err}")
