@@ -1,5 +1,3 @@
-import tkinter as tk
-from tkinter import ttk
 from dispatch.adm import admin_dispatch
 from dispatch.mod import mod_dispatch
 from dispatch.std import std_dispatch
@@ -88,41 +86,21 @@ def mode_select(selection: Listing) -> bool:
 
 class Admin:
     def __init__(self, carg: Carg or None = None):
-        self.root = tk.Tk()
-        WW: int = 700
-        WH: int = 600
-        center_x = int(900 - WW / 2)
-        center_y = int(500 - WH / 2)
-
-        self.root.title("qnot")
-        self.root.geometry(f"{WW}x{WH}+{center_x}+{center_y}")
-
-        disp_frame = ttk.Frame(self.root, borderwidth=1, relief="solid")
-        disp_frame.pack(padx=10, pady=10, anchor=tk.N, fill=tk.BOTH)
-        disp_test = ttk.Label(disp_frame, text="disp_test", background="red")
-        disp_test.pack(expand=True, fill=tk.BOTH)
-
-        msg_frame = ttk.Frame(self.root, borderwidth=1, relief="solid")
-        msg_frame.pack(padx=10, pady=10, expand=True, anchor=tk.S, fill=tk.X)
-        msg_test = ttk.Label(msg_frame, text="msg_test", background="blue")
-        msg_test.pack(expand=True, fill=tk.BOTH)
-
-        inp_frame = ttk.Frame(self.root)
-        inp_frame.pack(padx=10, pady=10, expand=True, anchor=tk.S, fill=tk.X)
-        qnot_prompt = ttk.Label(inp_frame, text="qnot> ")
-        qnot_prompt.pack(expand=False, side=tk.LEFT)
-
-        self.inp = tk.StringVar()
-
-        inp_entry = ttk.Entry(inp_frame, textvariable=self.inp)
-        inp_entry.bind('<Return>', self.__execute)
-        inp_entry.pack(fill=tk.X, expand=True)
-        inp_entry.focus()
-
         self.done: bool = False
         self.view: Listing or None = None
+        self.view_carg: Carg = Carg(None, None)
         self.view_carg: Carg = Carg()
-        self.root.mainloop()
+        try:
+            self.output: Output = self.__execute(carg)
+            self.show_list: bool = self.__handle_output(carg)
+        except QnotException as e:
+            print(e)
+            self.show_list: bool = False
+            self.output = None
+        if isinstance(self.output, Listing):
+            self.view = self.output
+            self.view_carg = carg
+        self.interface()
 
     def interface(self):
         while not self.done:
@@ -133,6 +111,7 @@ class Admin:
                     print(warn("No notes to list; add note, or search for notes to list here."))
 
                 carg: Carg = self.__prompt()
+                self.output = self.__execute(carg)
                 self.show_list = self.__handle_output(carg)
 
             except Exception as e:
@@ -141,22 +120,19 @@ class Admin:
                 self.show_list = False
         self.show_list = False
 
-    def __prompt(self) -> Carg:
-        # done: bool = False
-        # raw: list = []
-        # while not done:
-        #     raw = input(gry("qnot") + f("> ", 'c')).split()
-        #     done = False if len(raw) == 0 else True
-        # inp_len = len(raw)
-        # return Carg(raw[0] if inp_len >= 1 else None, raw[1:] if inp_len > 1 else None)
-        pass
-
-    def __execute(self, event) -> Output:
-        raw = self.inp.get()
+    @staticmethod
+    def __prompt() -> Carg:
+        done: bool = False
+        raw: list = []
+        while not done:
+            raw = input(gry("qnot") + f("> ", 'c')).split()
+            done = False if len(raw) == 0 else True
         inp_len = len(raw)
-        carg = Carg(raw[0] if inp_len >= 1 else None, raw[1:] if inp_len > 1 else None)
+        return Carg(raw[0] if inp_len >= 1 else None, raw[1:] if inp_len > 1 else None)
+
+    def __execute(self, carg) -> Output:
         if carg.is_adm():
-            self.output = admin_dispatch[carg.c](carg.a)
+            return admin_dispatch[carg.c](carg.a)
         elif carg.is_mod():
             raise SelectBeforeModify("modify")
         elif carg.is_sel():
@@ -166,9 +142,9 @@ class Admin:
                 [carg.c]+[i for i in carg.a] if carg.a is not None else [carg.c]),
                 pp=10
             ))
-            self.output = Message("selectend", f"{warn('Leaving modify mode.')}")
+            return Message("selectend", f"{warn('Leaving modify mode.')}")
         elif carg.is_empty():
-            self.output = Message("hide")
+            return Message("hide")
         else:
             raise InvalidInput("admin prompt", carg.c + (' ' + ' '.join(carg.a) if carg.a is not None else ''))
 
