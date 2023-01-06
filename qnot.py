@@ -5,7 +5,6 @@ from db_access import db_init
 from modes import Admin, Standard
 from carg import Carg
 from exceptions import NoSuchCommand
-import tkinter as tk
 
 DEF_LAST = "10"
 
@@ -21,7 +20,6 @@ DEF_LAST = "10"
 # If a user provides NO arguments from the cmd_accessories-line (only `qnot`) admin
 # mode is instantiated.
 def main():
-    root = tk.Tk()
     db_init()
     try:
         if len(sys.argv) == 1:
@@ -39,7 +37,6 @@ def main():
             Standard(Carg('add', sys.argv[1:]))
     except KeyboardInterrupt:
         print("\nQuitting qnot.")
-    root.mainloop()
 
 
 if __name__ == "__main__":
