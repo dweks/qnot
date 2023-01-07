@@ -12,7 +12,7 @@ class InvalidInput(QnotException):
         self.inp = inp
 
     def __str__(self):
-        return warn(f"`{self.inp}` not recognized.")
+        return f"`{self.inp}` not recognized."
 
 
 class ListingItemNotExist(QnotException):
@@ -20,7 +20,7 @@ class ListingItemNotExist(QnotException):
         self.err = err
 
     def __str__(self):
-        return warn(f"Number provided does not correspond to an item: {self.err}")
+        return f"Number provided does not correspond to an item: {self.err}"
 
 
 class OutsidePageBounds(QnotException):
@@ -28,12 +28,12 @@ class OutsidePageBounds(QnotException):
         self.err = err
 
     def __str__(self):
-        return warn(f"Already on {self.err} page.")
+        return f"Already on {self.err} page."
 
 
 class NoPagesInListing(QnotException):
     def __str__(self):
-        return warn("Empty listing!")
+        return "Empty listing!"
 
 
 class MissingArguments(QnotException):
@@ -41,7 +41,7 @@ class MissingArguments(QnotException):
         self.err = err
 
     def __str__(self):
-        return warn(f"'{self.err}' must take arguments.")
+        return f"'{self.err}' must take arguments."
 
 
 class MissingSearchQuery(QnotException):
@@ -49,7 +49,7 @@ class MissingSearchQuery(QnotException):
         self.err = err
 
     def __str__(self):
-        return warn(f"{self.err} must take a search query.")
+        return f"{self.err} must take a search query."
 
 
 class MatchNotFound(QnotException):
@@ -57,7 +57,7 @@ class MatchNotFound(QnotException):
         self.err = err
 
     def __str__(self):
-        return warn(f"No matches found for: {self.err}")
+        return f"No matches found for: {self.err}"
 
 
 class SelectBeforeModify(QnotException):
@@ -65,7 +65,7 @@ class SelectBeforeModify(QnotException):
         self.err = err
 
     def __str__(self):
-        return warn(f"Not in selection mode, first select note to use this command.")
+        return f"Not in selection mode, first select note to use this command."
 
 
 class NoSuchCommand(QnotException):
@@ -73,7 +73,7 @@ class NoSuchCommand(QnotException):
         self.err = err
 
     def __str__(self):
-        return warn(f"No such command for qnot: {self.err}")
+        return f"No such command for qnot: {self.err}"
 
 
 class NotListable(QnotException):
@@ -81,12 +81,12 @@ class NotListable(QnotException):
         self.err = err
 
     def __str__(self):
-        return warn(f"Nothing to list for {self.err}; Enter `list list` to see listable keywords.")
+        return f"Nothing to list for {self.err}; Enter `list list` to see listable keywords."
 
 
 class ListBeforeSelect(QnotException):
     def __str__(self):
-        return warn(f"Find notes to select.")
+        return f"Find notes to select."
 
 
 class FileNotExist(QnotException):
@@ -94,7 +94,7 @@ class FileNotExist(QnotException):
         self.err = err
 
     def __str__(self):
-        return warn(f"File does not exist: {self.err}")
+        return f"File does not exist: {self.err}"
 
 
 class EmptyDirectory(QnotException):
@@ -102,7 +102,7 @@ class EmptyDirectory(QnotException):
         self.err = err
 
     def __str__(self):
-        return warn(f"Provided directory has no importable files: {self.err}")
+        return f"Provided directory has no importable files: {self.err}"
 
 
 class InvalidSelection(QnotException):
@@ -110,4 +110,4 @@ class InvalidSelection(QnotException):
         self.err = err
 
     def __str__(self):
-        return warn(f"Invalid selection: {self.err}")
+        return f"Invalid selection: {self.err}"
